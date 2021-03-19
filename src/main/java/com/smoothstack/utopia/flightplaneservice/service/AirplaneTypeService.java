@@ -3,6 +3,7 @@ package com.smoothstack.utopia.flightplaneservice.service;
 import com.smoothstack.utopia.flightplaneservice.dao.AirplaneTypeDao;
 import com.smoothstack.utopia.flightplaneservice.dto.CreateAirplaneTypeDto;
 import com.smoothstack.utopia.flightplaneservice.dto.UpdateAirplaneTypeDto;
+import com.smoothstack.utopia.flightplaneservice.exception.AirplaneTypeDeletionNotAllowedException;
 import com.smoothstack.utopia.flightplaneservice.exception.AirplaneTypeNotFoundException;
 import com.smoothstack.utopia.shared.model.AirplaneType;
 import java.util.List;
@@ -33,18 +34,35 @@ public class AirplaneTypeService {
       .orElseThrow(AirplaneTypeNotFoundException::new);
   }
 
-  public void createAirplaneType(CreateAirplaneTypeDto createAirplaneTypeDto) {
-    //TODO: implement createAirplaneType
+  public AirplaneType createAirplaneType(
+    CreateAirplaneTypeDto createAirplaneTypeDto
+  ) {
+    AirplaneType airplaneType = new AirplaneType();
+    airplaneType.setMaxCapacity(createAirplaneTypeDto.getMaxCapacity());
+    airplaneTypeDao.save(airplaneType);
+    return airplaneType;
   }
 
   public void updateAirplaneType(
     Long airplaneTypeId,
     UpdateAirplaneTypeDto updateAirplaneTypeDto
   ) {
-    //TODO: implement updateAirplaneType
+    AirplaneType airplaneType = airplaneTypeDao
+      .findById(airplaneTypeId)
+      .orElseThrow(AirplaneTypeNotFoundException::new);
+    updateAirplaneTypeDto
+      .getMaxCapacity()
+      .ifPresent(airplaneType::setMaxCapacity);
+    airplaneTypeDao.save(airplaneType);
   }
 
   public void deleteAirplaneType(Long airplaneTypeId) {
-    //TODO: implement deleteAirplaneType
+    AirplaneType airplaneType = airplaneTypeDao
+      .findById(airplaneTypeId)
+      .orElseThrow(AirplaneTypeNotFoundException::new);
+    if (!airplaneType.getAirplanes().isEmpty()) {
+      throw new AirplaneTypeDeletionNotAllowedException();
+    }
+    airplaneTypeDao.delete(airplaneType);
   }
 }

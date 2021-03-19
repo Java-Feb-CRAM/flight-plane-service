@@ -9,6 +9,7 @@ import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
  * Mar 18 2021
  */
 @RestController
-@RequestMapping("/airplanes")
+@RequestMapping(
+  path = "/airplanes",
+  produces = {
+    MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE,
+  }
+)
 public class AirplaneController {
 
   private final AirplaneService airplaneService;
@@ -46,13 +52,14 @@ public class AirplaneController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public void createAirplane(
+  public Airplane createAirplane(
     @Valid @RequestBody CreateAirplaneDto createAirplaneDto
   ) {
-    airplaneService.createAirplane(createAirplaneDto);
+    return airplaneService.createAirplane(createAirplaneDto);
   }
 
   @PutMapping(path = "{airplaneId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void updateAirplane(
     @PathVariable("airplaneId") Long airplaneId,
     @Valid @RequestBody UpdateAirplaneDto updateAirplaneDto
@@ -61,6 +68,7 @@ public class AirplaneController {
   }
 
   @DeleteMapping(path = "{airplaneId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteAirplane(@PathVariable("airplaneId") Long airplaneId) {
     airplaneService.deleteAirplane(airplaneId);
   }
