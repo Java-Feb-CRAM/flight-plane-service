@@ -8,6 +8,7 @@ import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
  * Mar 18 2021
  */
 @RestController
-@RequestMapping("/flights")
+@RequestMapping(
+  path = "/flights",
+  produces = {
+    MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE,
+  }
+)
 public class FlightController {
 
   private final FlightService flightService;
@@ -45,13 +51,14 @@ public class FlightController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public void createFlight(
+  public Flight createFlight(
     @Valid @RequestBody CreateFlightDto createFlightDto
   ) {
-    flightService.createFlight(createFlightDto);
+    return flightService.createFlight(createFlightDto);
   }
 
   @PutMapping(path = "{flightId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void updateFlight(
     @PathVariable("flightId") Long flightId,
     @Valid @RequestBody UpdateFlightDto updateFlightDto
@@ -60,6 +67,7 @@ public class FlightController {
   }
 
   @DeleteMapping(path = "{flightId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteFlight(@PathVariable("flightId") Long flightId) {
     flightService.deleteFlight(flightId);
   }

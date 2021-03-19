@@ -6,6 +6,7 @@ import com.smoothstack.utopia.flightplaneservice.dao.RouteDao;
 import com.smoothstack.utopia.flightplaneservice.dto.CreateFlightDto;
 import com.smoothstack.utopia.flightplaneservice.dto.UpdateFlightDto;
 import com.smoothstack.utopia.flightplaneservice.exception.AirplaneNotFoundException;
+import com.smoothstack.utopia.flightplaneservice.exception.FlightDeletionNotAllowedException;
 import com.smoothstack.utopia.flightplaneservice.exception.FlightNotFoundException;
 import com.smoothstack.utopia.flightplaneservice.exception.RouteNotFoundException;
 import com.smoothstack.utopia.shared.model.Airplane;
@@ -47,7 +48,7 @@ public class FlightService {
       .orElseThrow(FlightNotFoundException::new);
   }
 
-  public void createFlight(CreateFlightDto createFlightDto) {
+  public Flight createFlight(CreateFlightDto createFlightDto) {
     Route route = routeDao
       .findById(createFlightDto.getRouteId())
       .orElseThrow(RouteNotFoundException::new);
@@ -62,9 +63,46 @@ public class FlightService {
       createFlightDto.getSeatPrice()
     );
     flightDao.save(flight);
+    return flight;
   }
 
-  public void updateFlight(Long flightId, UpdateFlightDto updateFlightDto) {}
+  public void updateFlight(Long flightId, UpdateFlightDto updateFlightDto) {
+    Flight flight = flightDao
+      .findById(flightId)
+      .orElseThrow(FlightNotFoundException::new);
+    updateFlightDto
+      .getAirplaneId()
+      .ifPresent(
+        airplaneId -> {
+          Airplane airplane = airplaneDao
+            .findById(airplaneId)
+            .orElseThrow(AirplaneNotFoundException::new);
+          flight.setAirplane(airplane);
+        }
+      );
+    updateFlightDto
+      .getRouteId()
+      .ifPresent(
+        routeId -> {
+          Route route = routeDao
+            .findById(routeId)
+            .orElseThrow(RouteNotFoundException::new);
+          flight.setRoute(route);
+        }
+      );
+    updateFlightDto.getReservedSeats().ifPresent(flight::setReservedSeats);
+    updateFlightDto.getDepartureTime().ifPresent(flight::setDepartureTime);
+    updateFlightDto.getSeatPrice().ifPresent(flight::setSeatPrice);
+    flightDao.save(flight);
+  }
 
-  public void deleteFlight(Long flightId) {}
+  public void deleteFlight(Long flightId) {
+    Flight flight = flightDao
+      .findById(flightId)
+      .orElseThrow(FlightNotFoundException::new);
+    if (!flight.getBookings().isEmpty()) {
+      throw new FlightDeletionNotAllowedException();
+    }
+    flightDao.delete(flight);
+  }
 }
