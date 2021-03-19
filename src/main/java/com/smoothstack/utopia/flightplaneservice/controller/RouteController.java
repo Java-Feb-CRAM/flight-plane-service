@@ -9,6 +9,7 @@ import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
  * Mar 17 2021
  */
 @RestController
-@RequestMapping("/routes")
+@RequestMapping(
+  path = "/routes",
+  produces = {
+    MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE,
+  }
+)
 public class RouteController {
 
   private final RouteService routeService;
@@ -46,11 +52,12 @@ public class RouteController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public void createRoute(@Valid @RequestBody CreateRouteDto createRouteDto) {
-    routeService.createRoute(createRouteDto);
+  public Route createRoute(@Valid @RequestBody CreateRouteDto createRouteDto) {
+    return routeService.createRoute(createRouteDto);
   }
 
   @PutMapping(path = "{routeId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void updateRoute(
     @PathVariable("routeId") Long routeId,
     @Valid @RequestBody UpdateRouteDto updateRouteDto
@@ -59,6 +66,7 @@ public class RouteController {
   }
 
   @DeleteMapping(path = "{routeId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteRoute(@PathVariable("routeId") Long routeId) {
     routeService.deleteRoute(routeId);
   }

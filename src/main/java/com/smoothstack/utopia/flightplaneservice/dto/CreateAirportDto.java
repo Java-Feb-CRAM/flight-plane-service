@@ -24,9 +24,9 @@ public class CreateAirportDto {
     regexp = "[A-Z]{3}",
     message = "Airport ID can only contain capital letters"
   )
-  private String id;
+  private String iataId;
 
   @NotBlank(message = "Airport city is required")
-  @Size(max = 255, message = "Airport city must not exceed 255 characters")
+  @Size(max = 45, message = "Airport city must not exceed 45 characters")
   private String city;
 }

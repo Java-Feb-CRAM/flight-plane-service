@@ -25,7 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
  * Mar 17 2021
  */
 @RestController
-@RequestMapping("/airports")
+@RequestMapping(
+  value = "/airports",
+  produces = {
+    MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE,
+  }
+)
 public class AirportController {
 
   private final AirportService airportService;
@@ -35,11 +40,7 @@ public class AirportController {
     this.airportService = airportService;
   }
 
-  @GetMapping(
-    produces = {
-      MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE,
-    }
-  )
+  @GetMapping
   public List<Airport> getAllAirports() {
     return airportService.getAllAirports();
   }
@@ -51,13 +52,14 @@ public class AirportController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public void createAirport(
+  public Airport createAirport(
     @Valid @RequestBody CreateAirportDto createAirportDto
   ) {
-    airportService.createAirport(createAirportDto);
+    return airportService.createAirport(createAirportDto);
   }
 
   @PutMapping(path = "{airportId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void updateAirport(
     @PathVariable("airportId") String airportId,
     @Valid @RequestBody UpdateAirportDto updateAirportDto
@@ -66,6 +68,7 @@ public class AirportController {
   }
 
   @DeleteMapping(path = "{airportId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteAirport(@PathVariable("airportId") String airportId) {
     airportService.deleteAirport(airportId);
   }

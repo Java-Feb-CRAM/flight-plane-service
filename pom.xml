@@ -73,7 +73,7 @@
         <dependency>
             <groupId>com.smoothstack.utopia</groupId>
             <artifactId>shared</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.8-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <dependencyManagement>
