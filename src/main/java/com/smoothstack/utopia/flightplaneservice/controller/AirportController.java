@@ -6,7 +6,6 @@ import com.smoothstack.utopia.flightplaneservice.service.AirportService;
 import com.smoothstack.utopia.shared.model.Airport;
 import java.util.List;
 import javax.validation.Valid;
-import javax.ws.rs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

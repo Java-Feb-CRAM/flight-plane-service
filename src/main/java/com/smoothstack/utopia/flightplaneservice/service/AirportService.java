@@ -1,7 +1,6 @@
 package com.smoothstack.utopia.flightplaneservice.service;
 
 import com.smoothstack.utopia.flightplaneservice.dao.AirportDao;
-import com.smoothstack.utopia.flightplaneservice.dao.RouteDao;
 import com.smoothstack.utopia.flightplaneservice.dto.CreateAirportDto;
 import com.smoothstack.utopia.flightplaneservice.dto.UpdateAirportDto;
 import com.smoothstack.utopia.flightplaneservice.exception.AirportDeletionNotAllowedException;
@@ -9,7 +8,6 @@ import com.smoothstack.utopia.flightplaneservice.exception.AirportNotFoundExcept
 import com.smoothstack.utopia.flightplaneservice.exception.DuplicateAirportException;
 import com.smoothstack.utopia.shared.model.Airport;
 import java.util.List;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

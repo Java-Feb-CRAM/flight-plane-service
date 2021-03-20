@@ -1,7 +1,6 @@
 package com.smoothstack.utopia.flightplaneservice.dto;
 
 import java.util.Optional;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;

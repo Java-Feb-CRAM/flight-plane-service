@@ -1,6 +1,5 @@
 package com.smoothstack.utopia.flightplaneservice.controller;
 
-import com.netflix.discovery.converters.Auto;
 import com.smoothstack.utopia.flightplaneservice.dto.CreateRouteDto;
 import com.smoothstack.utopia.flightplaneservice.dto.UpdateRouteDto;
 import com.smoothstack.utopia.flightplaneservice.service.RouteService;

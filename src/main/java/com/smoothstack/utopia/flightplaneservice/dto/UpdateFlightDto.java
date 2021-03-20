@@ -2,7 +2,6 @@ package com.smoothstack.utopia.flightplaneservice.dto;
 
 import java.time.Instant;
 import java.util.Optional;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.Getter;
