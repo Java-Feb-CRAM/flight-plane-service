@@ -1,8 +1,14 @@
 package com.smoothstack.utopia.flightplaneservice.controller;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 import com.smoothstack.utopia.flightplaneservice.Utils;
 import com.smoothstack.utopia.flightplaneservice.dao.AirplaneDao;
@@ -10,7 +16,6 @@ import com.smoothstack.utopia.flightplaneservice.dao.AirplaneTypeDao;
 import com.smoothstack.utopia.flightplaneservice.dao.AirportDao;
 import com.smoothstack.utopia.flightplaneservice.dao.FlightDao;
 import com.smoothstack.utopia.flightplaneservice.dao.RouteDao;
-import com.smoothstack.utopia.flightplaneservice.dto.CreateAirportDto;
 import com.smoothstack.utopia.flightplaneservice.dto.CreateRouteDto;
 import com.smoothstack.utopia.flightplaneservice.dto.UpdateRouteDto;
 import com.smoothstack.utopia.flightplaneservice.exception.AirportNotFoundException;

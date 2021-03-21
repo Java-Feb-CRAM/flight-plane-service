@@ -1,8 +1,14 @@
 package com.smoothstack.utopia.flightplaneservice.controller;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 import com.smoothstack.utopia.flightplaneservice.Utils;
 import com.smoothstack.utopia.flightplaneservice.dao.AirplaneDao;
@@ -12,7 +18,6 @@ import com.smoothstack.utopia.flightplaneservice.dao.FlightDao;
 import com.smoothstack.utopia.flightplaneservice.dao.RouteDao;
 import com.smoothstack.utopia.flightplaneservice.dto.CreateAirplaneDto;
 import com.smoothstack.utopia.flightplaneservice.dto.UpdateAirplaneDto;
-import com.smoothstack.utopia.flightplaneservice.dto.UpdateAirplaneTypeDto;
 import com.smoothstack.utopia.flightplaneservice.exception.AirplaneDeletionNotAllowedException;
 import com.smoothstack.utopia.flightplaneservice.exception.AirplaneNotFoundException;
 import com.smoothstack.utopia.flightplaneservice.exception.AirplaneTypeNotFoundException;
@@ -23,7 +28,6 @@ import com.smoothstack.utopia.shared.model.Flight;
 import com.smoothstack.utopia.shared.model.Route;
 import java.time.Instant;
 import java.util.Optional;
-import jdk.jshell.execution.Util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
