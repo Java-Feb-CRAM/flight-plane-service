@@ -82,7 +82,7 @@ public class AirportControllerIntTest {
   }
 
   @Test
-  public void canGetAirport_WhenGetAirportWithId_thenStatus200()
+  public void canGetAirport_whenGetAirportWithId_thenStatus200()
     throws Exception {
     createAirport("LAX", "Los Angeles");
     mvc
