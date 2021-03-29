@@ -42,4 +42,9 @@ public class Utils {
       throw new RuntimeException(e);
     }
   }
+
+  public static ObjectMapper getMapper() {
+    if (!initialized) init();
+    return objectMapper;
+  }
 }

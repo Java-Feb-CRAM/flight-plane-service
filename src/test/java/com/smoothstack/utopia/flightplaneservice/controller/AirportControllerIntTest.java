@@ -1,14 +1,26 @@
 package com.smoothstack.utopia.flightplaneservice.controller;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 import com.smoothstack.utopia.flightplaneservice.Utils;
 import com.smoothstack.utopia.flightplaneservice.dao.AirportDao;
+import com.smoothstack.utopia.flightplaneservice.dao.RouteDao;
 import com.smoothstack.utopia.flightplaneservice.dto.CreateAirportDto;
+import com.smoothstack.utopia.flightplaneservice.dto.UpdateAirportDto;
+import com.smoothstack.utopia.flightplaneservice.exception.AirportDeletionNotAllowedException;
 import com.smoothstack.utopia.flightplaneservice.exception.AirportNotFoundException;
+import com.smoothstack.utopia.flightplaneservice.exception.DuplicateAirportException;
 import com.smoothstack.utopia.shared.model.Airport;
+import com.smoothstack.utopia.shared.model.Route;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,33 +48,36 @@ public class AirportControllerIntTest {
   @Autowired
   private AirportDao airportDao;
 
-  private void createAirport(String iataId, String city) {
+  @Autowired
+  private RouteDao routeDao;
+
+  private Airport createAirport(String iataId, String city) {
     Airport airport = new Airport();
     airport.setIataId(iataId);
     airport.setCity(city);
     airportDao.save(airport);
+    return airport;
+  }
+
+  private void createRoute(Airport origin, Airport destination) {
+    Route route = new Route();
+    route.setOriginAirport(origin);
+    route.setDestinationAirport(destination);
+    routeDao.save(route);
   }
 
   @BeforeEach
-  public void wipeAirportDb() {
+  public void wipeDb() {
+    routeDao.deleteAll();
     airportDao.deleteAll();
   }
 
-  @Test
-  public void canGetAllAirportsJson_whenGetAirportsJson_thenStatus200()
-    throws Exception {
-    createAirport("IAH", "Houston");
-    mvc
-      .perform(get("/airports"))
-      .andExpect(status().isOk())
-      .andExpect(
-        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
-      )
-      .andExpect(jsonPath("$[0].iataId", is("IAH")));
-  }
+  /*
+    GET Tests
+   */
 
   @Test
-  public void canGetAllAirportsXml_whenGetAirportsXml_thenStatus200()
+  public void canGetAllAirports_whenGetAirports_thenStatus200()
     throws Exception {
     createAirport("IAH", "Houston");
     mvc
@@ -70,6 +85,19 @@ public class AirportControllerIntTest {
       .andExpect(status().isOk())
       .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
       .andExpect(xpath("List/item[1]/iataId").string(is("IAH")));
+  }
+
+  @Test
+  public void canGetAirport_whenGetAirportWithId_thenStatus200()
+    throws Exception {
+    createAirport("LAX", "Los Angeles");
+    mvc
+      .perform(get("/airports/LAX"))
+      .andExpect(status().isOk())
+      .andExpect(
+        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(jsonPath("$.iataId", is("LAX")));
   }
 
   @Test
@@ -86,8 +114,12 @@ public class AirportControllerIntTest {
       );
   }
 
+  /*
+    POST Tests
+   */
+
   @Test
-  public void canCreateAirport_whenPostAirportWithValidDataJson_thenStatus201()
+  public void canCreateAirport_whenPostAirportWithValidData_thenStatus201()
     throws Exception {
     CreateAirportDto createAirportDto = new CreateAirportDto();
     createAirportDto.setIataId("SFO");
@@ -103,24 +135,137 @@ public class AirportControllerIntTest {
       .andExpect(
         content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
       )
-      .andExpect(jsonPath("$.iataId", is("SFO")));
+      .andExpect(jsonPath("$.iataId", is("SFO")))
+      .andExpect(
+        result -> {
+          Assertions.assertEquals(
+            "San Francisco",
+            airportDao.findById("SFO").get().getCity()
+          );
+        }
+      );
   }
 
   @Test
-  public void canCreateAirport_whenPostAirportWithValidDataXml_thenStatus201()
+  public void cannotCreateAirport_whenPostAirportWithDuplicateId_thenStatus409()
     throws Exception {
+    createAirport("LAX", "Los Angeles");
     CreateAirportDto createAirportDto = new CreateAirportDto();
     createAirportDto.setIataId("LAX");
-    createAirportDto.setCity("Los Angeles");
+    createAirportDto.setCity("The City of Angels");
     mvc
       .perform(
         post("/airports")
-          .content(Utils.asXmlString(createAirportDto))
-          .contentType(MediaType.APPLICATION_XML)
-          .accept(MediaType.APPLICATION_XML)
+          .content(Utils.asJsonString(createAirportDto))
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON)
       )
-      .andExpect(status().isCreated())
-      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
-      .andExpect(xpath("Airport/iataId").string(is("LAX")));
+      .andExpect(status().isConflict())
+      .andExpect(
+        result ->
+          Assertions.assertTrue(
+            result.getResolvedException() instanceof DuplicateAirportException
+          )
+      );
+  }
+
+  /*
+    PUT Tests
+   */
+
+  @Test
+  public void canUpdateAirport_whenPutAirportWithValidId_thenStatus204()
+    throws Exception {
+    UpdateAirportDto updateAirportDto = new UpdateAirportDto();
+    updateAirportDto.setCity(Optional.of("San Francisco"));
+    createAirport("SFO", "Los Angeles");
+    mvc
+      .perform(
+        put("/airports/SFO")
+          .content(Utils.asJsonString(updateAirportDto))
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isNoContent())
+      .andExpect(
+        result -> {
+          Assertions.assertEquals(
+            "San Francisco",
+            airportDao.findById("SFO").get().getCity()
+          );
+        }
+      );
+  }
+
+  @Test
+  public void cannotUpdateAirport_whenPutAirportWithInvalidId_thenStatus404()
+    throws Exception {
+    UpdateAirportDto updateAirportDto = new UpdateAirportDto();
+    updateAirportDto.setCity(Optional.of("Houston"));
+    mvc
+      .perform(
+        put("/airports/LAX")
+          .content(Utils.asJsonString(updateAirportDto))
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isNotFound())
+      .andExpect(
+        result ->
+          Assertions.assertTrue(
+            result.getResolvedException() instanceof AirportNotFoundException
+          )
+      );
+  }
+
+  /*
+    DELETE Tests
+   */
+
+  @Test
+  public void canDeleteAirport_whenDeleteAirportWithValidId_thenStatus204()
+    throws Exception {
+    createAirport("IAH", "Houston");
+    mvc
+      .perform(delete("/airports/IAH"))
+      .andExpect(status().isNoContent())
+      .andExpect(
+        result -> {
+          Assertions.assertFalse(airportDao.existsById("IAH"));
+        }
+      );
+  }
+
+  @Test
+  public void cannotDeleteAirport_whenDeleteAirportWithInvalidId_thenStatus404()
+    throws Exception {
+    mvc
+      .perform(delete("/airports/LAX"))
+      .andExpect(status().isNotFound())
+      .andExpect(
+        result -> {
+          Assertions.assertTrue(
+            result.getResolvedException() instanceof AirportNotFoundException
+          );
+        }
+      );
+  }
+
+  @Test
+  public void cannotDeleteAirport_whenDeleteAirportWithAssociatedRoutes_thenStatus405()
+    throws Exception {
+    Airport a = createAirport("LAX", "Los Angeles");
+    Airport b = createAirport("SFO", "San Francisco");
+    createRoute(a, b);
+    mvc
+      .perform(delete("/airports/LAX"))
+      .andExpect(status().isMethodNotAllowed())
+      .andExpect(
+        result -> {
+          Assertions.assertTrue(
+            result.getResolvedException() instanceof AirportDeletionNotAllowedException
+          );
+        }
+      );
   }
 }
