@@ -55,13 +55,12 @@ public class FlightService {
     Airplane airplane = airplaneDao
       .findById(createFlightDto.getAirplaneId())
       .orElseThrow(AirplaneNotFoundException::new);
-    Flight flight = new Flight(
-      route,
-      airplane,
-      createFlightDto.getDepartureTime(),
-      createFlightDto.getReservedSeats(),
-      createFlightDto.getSeatPrice()
-    );
+    Flight flight = new Flight();
+    flight.setRoute(route);
+    flight.setAirplane(airplane);
+    flight.setDepartureTime(createFlightDto.getDepartureTime());
+    flight.setReservedSeats(createFlightDto.getReservedSeats());
+    flight.setSeatPrice(createFlightDto.getSeatPrice());
     flightDao.save(flight);
     return flight;
   }

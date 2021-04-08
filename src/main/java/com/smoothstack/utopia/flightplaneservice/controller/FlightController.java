@@ -52,7 +52,7 @@ public class FlightController {
   }
 
   @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseStatus(code = HttpStatus.CREATED)
   public Flight createFlight(
     @Valid @RequestBody CreateFlightDto createFlightDto
   ) {
