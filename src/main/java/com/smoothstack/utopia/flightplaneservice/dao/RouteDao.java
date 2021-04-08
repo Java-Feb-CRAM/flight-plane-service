@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 public interface RouteDao extends JpaRepository<Route, Long> {
   Optional<Route> findRouteByOriginAirportAndDestinationAirport(
     Airport originAirport,
-    Airport destinationAirport
-  );
+    Airport destinationAirport);
+  Optional<Route[]> findAllRoutesByDestinationAirport(Airport destinationAirport);
+  Optional<Route[]> findAllRoutesByOriginAirport(Airport destinationAirport);
 }
