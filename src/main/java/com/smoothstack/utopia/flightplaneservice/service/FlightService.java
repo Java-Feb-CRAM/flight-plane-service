@@ -16,10 +16,9 @@ import com.smoothstack.utopia.shared.model.Flight;
 import com.smoothstack.utopia.shared.model.Route;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,29 +61,32 @@ public class FlightService {
   {
     if (stops > 0) {
       List<List<Flight>> pathsOfFlights = new ArrayList<List<Flight>>();
-      Arrays.asList(
-          getAllFlightsWithMatchingOriginAirportInFlightRoute(originIataId)
-      ).stream().forEach(originFlight ->
-      {
-        if (
-          originFlight.getRoute().getDestinationAirport().getIataId()
-              .equals(destinationIataId)
-        ) {
-          pathsOfFlights.addAll(
-              getFlightPathDestinationFlights(originIataId, destinationIataId)
-          );
-        } else {
-          getAllMultiStopFlights(
-              originFlight.getRoute().getDestinationAirport().getIataId(),
-              destinationIataId,
-              stops - 1
-          ).stream().forEach(returnedFlightPath ->
+      Stream
+          .of(getAllFlightsWithMatchingOriginAirportInFlightRoute(originIataId))
+          .forEach(originFlight ->
           {
-            returnedFlightPath.add(0, originFlight);
-            pathsOfFlights.add(returnedFlightPath);
+            if (
+              originFlight.getRoute().getDestinationAirport().getIataId()
+                  .equals(destinationIataId)
+            ) {
+              pathsOfFlights.addAll(
+                  getFlightPathDestinationFlights(
+                      originIataId,
+                      destinationIataId
+                  )
+              );
+            } else {
+              getAllMultiStopFlights(
+                  originFlight.getRoute().getDestinationAirport().getIataId(),
+                  destinationIataId,
+                  stops - 1
+              ).stream().forEach(returnedFlightPath ->
+          {
+                returnedFlightPath.add(0, originFlight);
+                pathsOfFlights.add(returnedFlightPath);
+              });
+            }
           });
-        }
-      });
       return pathsOfFlights;
     } else {
       return getFlightPathDestinationFlights(originIataId, destinationIataId);
@@ -96,7 +98,7 @@ public class FlightService {
   {
     List<List<Flight>> pathsOfFlights = new ArrayList<List<Flight>>();
     List<Flight> path = new ArrayList<Flight>();
-    Arrays.asList(getAllNoStopFlights(originIataId, destinationIataId)).stream()
+    Stream.of(getAllNoStopFlights(originIataId, destinationIataId))
         .forEach(flight ->
         {
           path.add(flight);
@@ -117,8 +119,7 @@ public class FlightService {
         );
 
     if (route.isPresent()) {
-      Optional<Flight[]> flights = flightDao.findAllByRoute(route.get());
-      if (flights.isPresent()) { return flights.get(); }
+        return flightDao.findAllByRouteIdAndHasVacancy(route.get().getId());
     }
     return new Flight[0];
   }
@@ -126,19 +127,17 @@ public class FlightService {
   private Flight[]
       getAllFlightsWithMatchingOriginAirportInFlightRoute(String iata_id)
   {
-    return Arrays
-        .asList(
+    return Stream
+        .of(
             routeDao.findAllRoutesByOriginAirport(
                 airportDao.findByIataId(iata_id)
                     .orElseThrow(AirportNotFoundException::new)
             ).orElseThrow(RouteNotFoundException::new)
-        ).stream()
+        )
         .map(
             route -> flightDao.findAllByRoute(route)
                 .orElseThrow(FlightNotFoundException::new)
-        ).collect(Collectors.toList()).stream()
-        .flatMap(flights -> Arrays.asList(flights).stream())
-        .collect(Collectors.toList()).toArray(Flight[]::new);
+        ).flatMap(flights -> Stream.of(flights)).toArray(Flight[]::new);
   }
 
   public Flight createFlight(CreateFlightDto createFlightDto) {

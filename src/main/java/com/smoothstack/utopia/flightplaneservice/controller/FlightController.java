@@ -64,9 +64,8 @@ public class FlightController {
         .getAllMultiStopFlights(originIataId, destinationIataId, stops).stream()
         .map(flightPath -> flightPath.toArray(Flight[]::new))
         .filter(
-            flightPath -> flightPath.length > 0
-                && flightPath[0].getDepartureTime().getEpochSecond() ==
-                    departureTime
+            flightPath -> flightPath[0].getDepartureTime().getEpochSecond() ==
+                departureTime
         ).collect(Collectors.toSet());
   }
 
