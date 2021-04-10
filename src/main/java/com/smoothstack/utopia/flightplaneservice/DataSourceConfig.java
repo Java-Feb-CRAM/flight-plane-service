@@ -5,12 +5,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 /**
  * @author Rob Maes
  * Apr 10 2021
  */
 @Configuration
+@Profile(value = { "dev", "prod" })
 public class DataSourceConfig {
 
   @Value("#{${UT_MYSQL}['host']}")
