@@ -40,7 +40,7 @@ pipeline {
             steps {
                 echo 'Packging jar file..'
                 script {
-                    sh "mvn -s /var/lib/jenkins/settings.xml clean package -Dmaven.test.skip.exec"
+                    sh "mvn -s /var/lib/jenkins/settings.xml package -Dmaven.test.skip.exec"
                 }
             }
         }
