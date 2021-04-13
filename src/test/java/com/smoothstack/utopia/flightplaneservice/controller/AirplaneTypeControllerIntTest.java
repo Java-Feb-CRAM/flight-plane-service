@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource(
   locations = "classpath:application-integrationtest.properties"
 )
-public class AirplaneTypeControllerIntTest {
+class AirplaneTypeControllerIntTest {
 
   @Autowired
   MockMvc mvc;
@@ -74,7 +74,7 @@ public class AirplaneTypeControllerIntTest {
    */
 
   @Test
-  public void canGetAllAirplaneTypes_whenGetAirplaneTypes_thenStatus200()
+  void canGetAllAirplaneTypes_whenGetAirplaneTypes_thenStatus200()
     throws Exception {
     createAirplaneType(300);
     mvc
@@ -85,7 +85,7 @@ public class AirplaneTypeControllerIntTest {
   }
 
   @Test
-  public void canGetAirplaneType_whenGetAirplaneTypeWithId_thenStatus200()
+  void canGetAirplaneType_whenGetAirplaneTypeWithId_thenStatus200()
     throws Exception {
     AirplaneType airplaneType = createAirplaneType(20);
     mvc
@@ -98,7 +98,7 @@ public class AirplaneTypeControllerIntTest {
   }
 
   @Test
-  public void cannotGetAirplaneType_whenGetAirplaneTypeWithInvalidId_thenStatus404()
+  void cannotGetAirplaneType_whenGetAirplaneTypeWithInvalidId_thenStatus404()
     throws Exception {
     mvc
       .perform(get("/airplane_types/{id}", 1))
@@ -116,7 +116,7 @@ public class AirplaneTypeControllerIntTest {
     POST Tests
    */
   @Test
-  public void canCreateAirplaneType_whenPostAirplaneTypeWithValidData_thenStatus201()
+  void canCreateAirplaneType_whenPostAirplaneTypeWithValidData_thenStatus201()
     throws Exception {
     CreateAirplaneTypeDto createAirplaneTypeDto = new CreateAirplaneTypeDto();
     createAirplaneTypeDto.setMaxCapacity(300);
@@ -152,7 +152,7 @@ public class AirplaneTypeControllerIntTest {
     PUT Tests
    */
   @Test
-  public void canUpdateAirplaneType_whenPutAirplaneTypeWithValidId_thenStatus204()
+  void canUpdateAirplaneType_whenPutAirplaneTypeWithValidId_thenStatus204()
     throws Exception {
     AirplaneType airplaneType = createAirplaneType(1234);
     UpdateAirplaneTypeDto updateAirplaneTypeDto = new UpdateAirplaneTypeDto();
@@ -179,7 +179,7 @@ public class AirplaneTypeControllerIntTest {
   }
 
   @Test
-  public void cannotUpdateAirplaneType_whenPutAirplaneTypeWithInvalidId_thenStatus404()
+  void cannotUpdateAirplaneType_whenPutAirplaneTypeWithInvalidId_thenStatus404()
     throws Exception {
     UpdateAirplaneTypeDto updateAirplaneTypeDto = new UpdateAirplaneTypeDto();
     updateAirplaneTypeDto.setMaxCapacity(Optional.of(123));
@@ -204,7 +204,7 @@ public class AirplaneTypeControllerIntTest {
    */
 
   @Test
-  public void canDeleteAirplaneType_whenDeleteAirplaneTypeWithValidId_thenStatus204()
+  void canDeleteAirplaneType_whenDeleteAirplaneTypeWithValidId_thenStatus204()
     throws Exception {
     AirplaneType airplaneType = createAirplaneType(999);
     mvc
@@ -220,7 +220,7 @@ public class AirplaneTypeControllerIntTest {
   }
 
   @Test
-  public void cannotDeleteAirplaneType_whenDeleteAirplaneTypeWithInvalidId_thenStatus404()
+  void cannotDeleteAirplaneType_whenDeleteAirplaneTypeWithInvalidId_thenStatus404()
     throws Exception {
     mvc
       .perform(delete("/airplane_types/{id}", 4))
@@ -235,7 +235,7 @@ public class AirplaneTypeControllerIntTest {
   }
 
   @Test
-  public void cannotDeleteAirplaneType_whenDeleteAirplaneTypeWithAssociatedAirplanes_thenStatus405()
+  void cannotDeleteAirplaneType_whenDeleteAirplaneTypeWithAssociatedAirplanes_thenStatus405()
     throws Exception {
     AirplaneType airplaneType = createAirplaneType(345);
     createAirplane(airplaneType);

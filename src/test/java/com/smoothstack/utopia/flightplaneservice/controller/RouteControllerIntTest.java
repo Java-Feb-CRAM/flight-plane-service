@@ -48,7 +48,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource(
   locations = "classpath:application-integrationtest.properties"
 )
-public class RouteControllerIntTest {
+class RouteControllerIntTest {
 
   @Autowired
   MockMvc mvc;
@@ -121,7 +121,7 @@ public class RouteControllerIntTest {
    */
 
   @Test
-  public void canGetAllRoutes_whenGetRoutes_thenStatus200() throws Exception {
+  void canGetAllRoutes_whenGetRoutes_thenStatus200() throws Exception {
     createRoute(airportLAX, airportSFO);
     mvc
       .perform(get("/routes").accept(MediaType.APPLICATION_XML))
@@ -131,7 +131,7 @@ public class RouteControllerIntTest {
   }
 
   @Test
-  public void canGetRoute_whenGetRouteWithId_thenStatus200() throws Exception {
+  void canGetRoute_whenGetRouteWithId_thenStatus200() throws Exception {
     Route route = createRoute(airportLAX, airportSFO);
     mvc
       .perform(get("/routes/{id}", route.getId()))
@@ -143,7 +143,7 @@ public class RouteControllerIntTest {
   }
 
   @Test
-  public void cannotGetRoute_whenGetRouteWithInvalidId_thenStatus404()
+  void cannotGetRoute_whenGetRouteWithInvalidId_thenStatus404()
     throws Exception {
     mvc
       .perform(get("/routes/{id}", 2))
@@ -161,7 +161,7 @@ public class RouteControllerIntTest {
     POST Tests
    */
   @Test
-  public void canCreateRoute_whenPostRouteWithValidData_thenStatus201()
+  void canCreateRoute_whenPostRouteWithValidData_thenStatus201()
     throws Exception {
     CreateRouteDto createRouteDto = new CreateRouteDto();
     createRouteDto.setDestinationAirportId("LAX");
@@ -196,7 +196,7 @@ public class RouteControllerIntTest {
   }
 
   @Test
-  public void cannotCreateRoute_whenPostRouteWithDuplicateRoute_thenStatus409()
+  void cannotCreateRoute_whenPostRouteWithDuplicateRoute_thenStatus409()
     throws Exception {
     createRoute(airportLAX, airportSFO);
     CreateRouteDto createRouteDto = new CreateRouteDto();
@@ -220,7 +220,7 @@ public class RouteControllerIntTest {
   }
 
   @Test
-  public void cannotCreateRoute_whenPostRouteWithInvalidOriginAirport_thenStatus404()
+  void cannotCreateRoute_whenPostRouteWithInvalidOriginAirport_thenStatus404()
     throws Exception {
     CreateRouteDto createRouteDto = new CreateRouteDto();
     createRouteDto.setOriginAirportId("IAH");
@@ -242,7 +242,7 @@ public class RouteControllerIntTest {
   }
 
   @Test
-  public void cannotCreateRoute_whenPostRouteWithInvalidDestinationAirport_thenStatus404()
+  void cannotCreateRoute_whenPostRouteWithInvalidDestinationAirport_thenStatus404()
     throws Exception {
     CreateRouteDto createRouteDto = new CreateRouteDto();
     createRouteDto.setOriginAirportId("LAX");
@@ -268,8 +268,7 @@ public class RouteControllerIntTest {
    */
 
   @Test
-  public void canUpdateRoute_whenPutRouteWithValidId_thenStatus204()
-    throws Exception {
+  void canUpdateRoute_whenPutRouteWithValidId_thenStatus204() throws Exception {
     Route route = createRoute(airportLAX, airportSFO);
     UpdateRouteDto updateRouteDto = new UpdateRouteDto();
     updateRouteDto.setOriginAirportId(Optional.of("PDX"));
@@ -296,7 +295,7 @@ public class RouteControllerIntTest {
   }
 
   @Test
-  public void cannotUpdateRoute_whenPutRouteWithInvalidId_thenStatus404()
+  void cannotUpdateRoute_whenPutRouteWithInvalidId_thenStatus404()
     throws Exception {
     UpdateRouteDto updateRouteDto = new UpdateRouteDto();
     updateRouteDto.setOriginAirportId(Optional.of("PDX"));
@@ -317,7 +316,7 @@ public class RouteControllerIntTest {
   }
 
   @Test
-  public void cannotUpdateRoute_whenPutRouteWithInvalidOriginAirport_thenStatus404()
+  void cannotUpdateRoute_whenPutRouteWithInvalidOriginAirport_thenStatus404()
     throws Exception {
     Route route = createRoute(airportLAX, airportSFO);
     UpdateRouteDto updateRouteDto = new UpdateRouteDto();
@@ -339,7 +338,7 @@ public class RouteControllerIntTest {
   }
 
   @Test
-  public void cannotUpdateRoute_whenPutRouteWithInvalidDestinationAirport_thenStatus404()
+  void cannotUpdateRoute_whenPutRouteWithInvalidDestinationAirport_thenStatus404()
     throws Exception {
     Route route = createRoute(airportLAX, airportSFO);
     UpdateRouteDto updateRouteDto = new UpdateRouteDto();
@@ -361,7 +360,7 @@ public class RouteControllerIntTest {
   }
 
   @Test
-  public void cannotUpdateRoute_whenPutRouteWithDuplicateRoute_thenStatus409()
+  void cannotUpdateRoute_whenPutRouteWithDuplicateRoute_thenStatus409()
     throws Exception {
     Route route1 = createRoute(airportLAX, airportSFO);
     Route route2 = createRoute(airportLAX, airportPDX);
@@ -387,7 +386,7 @@ public class RouteControllerIntTest {
     DELETE Tests
    */
   @Test
-  public void canDeleteRoute_whenDeleteRouteWithValidId_thenStatus204()
+  void canDeleteRoute_whenDeleteRouteWithValidId_thenStatus204()
     throws Exception {
     Route route = createRoute(airportLAX, airportSFO);
     mvc
@@ -399,7 +398,7 @@ public class RouteControllerIntTest {
   }
 
   @Test
-  public void cannotDeleteRoute_whenDeleteRouteWithInvalidId_thenStatus404()
+  void cannotDeleteRoute_whenDeleteRouteWithInvalidId_thenStatus404()
     throws Exception {
     mvc
       .perform(delete("/routes/{id}", 4))
@@ -413,7 +412,7 @@ public class RouteControllerIntTest {
   }
 
   @Test
-  public void cannotDeleteRoute_whenDeleteRouteWithAssociatedFlights_thenStatus405()
+  void cannotDeleteRoute_whenDeleteRouteWithAssociatedFlights_thenStatus405()
     throws Exception {
     Route route = createRoute(airportLAX, airportSFO);
     createFlight(route);
