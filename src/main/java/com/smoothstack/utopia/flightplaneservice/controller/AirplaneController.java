@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Rob Maes
  * Mar 18 2021
  */
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(
   path = "/airplanes",
