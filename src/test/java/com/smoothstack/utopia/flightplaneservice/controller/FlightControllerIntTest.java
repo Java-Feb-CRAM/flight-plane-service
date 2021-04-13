@@ -51,7 +51,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource(
   locations = "classpath:application-integrationtest.properties"
 )
-public class FlightControllerIntTest {
+class FlightControllerIntTest {
 
   @Autowired
   MockMvc mvc;
@@ -149,7 +149,7 @@ public class FlightControllerIntTest {
     GET Tests
    */
   @Test
-  public void canGetAllFlights_whenGetFlights_thenStatus200() throws Exception {
+  void canGetAllFlights_whenGetFlights_thenStatus200() throws Exception {
     createFlight();
     mvc
       .perform(get("/flights").accept(MediaType.APPLICATION_XML))
@@ -161,8 +161,7 @@ public class FlightControllerIntTest {
   }
 
   @Test
-  public void canGetFlight_whenGetFlightWithId_thenStatus200()
-    throws Exception {
+  void canGetFlight_whenGetFlightWithId_thenStatus200() throws Exception {
     Flight flight = createFlight();
     mvc
       .perform(get("/flights/{id}", flight.getId()))
@@ -174,7 +173,7 @@ public class FlightControllerIntTest {
   }
 
   @Test
-  public void cannotGetFlight_whenGetFlightWithInvalidId_thenStatus404()
+  void cannotGetFlight_whenGetFlightWithInvalidId_thenStatus404()
     throws Exception {
     mvc
       .perform(get("/flights/{id}", 4))
@@ -191,7 +190,7 @@ public class FlightControllerIntTest {
     POST Tests
    */
   @Test
-  public void canCreateFlight_whenPostFlightWithValidData_thenStatus201()
+  void canCreateFlight_whenPostFlightWithValidData_thenStatus201()
     throws Exception {
     CreateFlightDto createFlightDto = new CreateFlightDto();
     createFlightDto.setDepartureTime(Instant.now());
@@ -230,7 +229,7 @@ public class FlightControllerIntTest {
   }
 
   @Test
-  public void cannotCreateFlight_whenPostFlightWithInvalidRoute_thenStatus404()
+  void cannotCreateFlight_whenPostFlightWithInvalidRoute_thenStatus404()
     throws Exception {
     CreateFlightDto createFlightDto = new CreateFlightDto();
     createFlightDto.setDepartureTime(Instant.now());
@@ -255,7 +254,7 @@ public class FlightControllerIntTest {
   }
 
   @Test
-  public void cannotCreateFlight_whenPostFlightWithInvalidAirplane_thenStatus404()
+  void cannotCreateFlight_whenPostFlightWithInvalidAirplane_thenStatus404()
     throws Exception {
     CreateFlightDto createFlightDto = new CreateFlightDto();
     createFlightDto.setDepartureTime(Instant.now());
@@ -284,7 +283,7 @@ public class FlightControllerIntTest {
    */
 
   @Test
-  public void canUpdateFlight_whenPutFlightWithValidId_thenStatus204()
+  void canUpdateFlight_whenPutFlightWithValidId_thenStatus204()
     throws Exception {
     Flight flight = createFlight();
     UpdateFlightDto updateFlightDto = new UpdateFlightDto();
@@ -307,7 +306,7 @@ public class FlightControllerIntTest {
   }
 
   @Test
-  public void cannotUpdateFlight_whenPutFlightWithInvalidId_thenStatus404()
+  void cannotUpdateFlight_whenPutFlightWithInvalidId_thenStatus404()
     throws Exception {
     UpdateFlightDto updateFlightDto = new UpdateFlightDto();
     updateFlightDto.setSeatPrice(Optional.of(1337f));
@@ -328,7 +327,7 @@ public class FlightControllerIntTest {
   }
 
   @Test
-  public void cannotUpdateFlight_whenPutFlightWithInvalidRoute_thenStatus404()
+  void cannotUpdateFlight_whenPutFlightWithInvalidRoute_thenStatus404()
     throws Exception {
     Flight flight = createFlight();
     UpdateFlightDto updateFlightDto = new UpdateFlightDto();
@@ -350,7 +349,7 @@ public class FlightControllerIntTest {
   }
 
   @Test
-  public void cannotUpdateFlight_whenPutFlightWithInvalidAirplane_thenStatus404()
+  void cannotUpdateFlight_whenPutFlightWithInvalidAirplane_thenStatus404()
     throws Exception {
     Flight flight = createFlight();
     UpdateFlightDto updateFlightDto = new UpdateFlightDto();
@@ -375,7 +374,7 @@ public class FlightControllerIntTest {
     DELETE Tests
    */
   @Test
-  public void canDeleteFlight_whenDeleteFlightWithValidId_thenStatus204()
+  void canDeleteFlight_whenDeleteFlightWithValidId_thenStatus204()
     throws Exception {
     Flight flight = createFlight();
     mvc
@@ -387,7 +386,7 @@ public class FlightControllerIntTest {
   }
 
   @Test
-  public void cannotDeleteFlight_whenDeleteFlightWithInvalidId_thenStatus404()
+  void cannotDeleteFlight_whenDeleteFlightWithInvalidId_thenStatus404()
     throws Exception {
     mvc
       .perform(delete("/flights/{id}", 4213))
@@ -401,7 +400,7 @@ public class FlightControllerIntTest {
   }
 
   @Test
-  public void cannotDeleteFlight_whenDeleteFlightWithAssociatedBookings_thenStatus405()
+  void cannotDeleteFlight_whenDeleteFlightWithAssociatedBookings_thenStatus405()
     throws Exception {
     Booking booking = new Booking();
     bookingDao.save(booking);

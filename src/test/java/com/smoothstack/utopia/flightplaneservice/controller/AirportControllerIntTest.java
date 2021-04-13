@@ -40,7 +40,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource(
   locations = "classpath:application-integrationtest.properties"
 )
-public class AirportControllerIntTest {
+class AirportControllerIntTest {
 
   @Autowired
   MockMvc mvc;
@@ -77,8 +77,7 @@ public class AirportControllerIntTest {
    */
 
   @Test
-  public void canGetAllAirports_whenGetAirports_thenStatus200()
-    throws Exception {
+  void canGetAllAirports_whenGetAirports_thenStatus200() throws Exception {
     createAirport("IAH", "Houston");
     mvc
       .perform(get("/airports").accept(MediaType.APPLICATION_XML))
@@ -88,8 +87,7 @@ public class AirportControllerIntTest {
   }
 
   @Test
-  public void canGetAirport_whenGetAirportWithId_thenStatus200()
-    throws Exception {
+  void canGetAirport_whenGetAirportWithId_thenStatus200() throws Exception {
     createAirport("LAX", "Los Angeles");
     mvc
       .perform(get("/airports/LAX"))
@@ -101,7 +99,7 @@ public class AirportControllerIntTest {
   }
 
   @Test
-  public void cannotGetAirport_whenGetAirportWithInvalidId_thenStatus404()
+  void cannotGetAirport_whenGetAirportWithInvalidId_thenStatus404()
     throws Exception {
     mvc
       .perform(get("/airports/IAH"))
@@ -119,7 +117,7 @@ public class AirportControllerIntTest {
    */
 
   @Test
-  public void canCreateAirport_whenPostAirportWithValidData_thenStatus201()
+  void canCreateAirport_whenPostAirportWithValidData_thenStatus201()
     throws Exception {
     CreateAirportDto createAirportDto = new CreateAirportDto();
     createAirportDto.setIataId("SFO");
@@ -147,7 +145,7 @@ public class AirportControllerIntTest {
   }
 
   @Test
-  public void cannotCreateAirport_whenPostAirportWithDuplicateId_thenStatus409()
+  void cannotCreateAirport_whenPostAirportWithDuplicateId_thenStatus409()
     throws Exception {
     createAirport("LAX", "Los Angeles");
     CreateAirportDto createAirportDto = new CreateAirportDto();
@@ -174,7 +172,7 @@ public class AirportControllerIntTest {
    */
 
   @Test
-  public void canUpdateAirport_whenPutAirportWithValidId_thenStatus204()
+  void canUpdateAirport_whenPutAirportWithValidId_thenStatus204()
     throws Exception {
     UpdateAirportDto updateAirportDto = new UpdateAirportDto();
     updateAirportDto.setCity(Optional.of("San Francisco"));
@@ -198,7 +196,7 @@ public class AirportControllerIntTest {
   }
 
   @Test
-  public void cannotUpdateAirport_whenPutAirportWithInvalidId_thenStatus404()
+  void cannotUpdateAirport_whenPutAirportWithInvalidId_thenStatus404()
     throws Exception {
     UpdateAirportDto updateAirportDto = new UpdateAirportDto();
     updateAirportDto.setCity(Optional.of("Houston"));
@@ -223,7 +221,7 @@ public class AirportControllerIntTest {
    */
 
   @Test
-  public void canDeleteAirport_whenDeleteAirportWithValidId_thenStatus204()
+  void canDeleteAirport_whenDeleteAirportWithValidId_thenStatus204()
     throws Exception {
     createAirport("IAH", "Houston");
     mvc
@@ -237,7 +235,7 @@ public class AirportControllerIntTest {
   }
 
   @Test
-  public void cannotDeleteAirport_whenDeleteAirportWithInvalidId_thenStatus404()
+  void cannotDeleteAirport_whenDeleteAirportWithInvalidId_thenStatus404()
     throws Exception {
     mvc
       .perform(delete("/airports/LAX"))
@@ -252,7 +250,7 @@ public class AirportControllerIntTest {
   }
 
   @Test
-  public void cannotDeleteAirport_whenDeleteAirportWithAssociatedRoutes_thenStatus405()
+  void cannotDeleteAirport_whenDeleteAirportWithAssociatedRoutes_thenStatus405()
     throws Exception {
     Airport a = createAirport("LAX", "Los Angeles");
     Airport b = createAirport("SFO", "San Francisco");

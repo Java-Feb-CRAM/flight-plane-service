@@ -47,7 +47,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource(
   locations = "classpath:application-integrationtest.properties"
 )
-public class AirplaneControllerIntTest {
+class AirplaneControllerIntTest {
 
   @Autowired
   MockMvc mvc;
@@ -122,8 +122,7 @@ public class AirplaneControllerIntTest {
     GET Tests
    */
   @Test
-  public void canGetAllAirplanes_whenGetAirplanes_thenStatus200()
-    throws Exception {
+  void canGetAllAirplanes_whenGetAirplanes_thenStatus200() throws Exception {
     createAirplane(airplaneType777);
     mvc
       .perform(get("/airplanes").accept(MediaType.APPLICATION_XML))
@@ -135,8 +134,7 @@ public class AirplaneControllerIntTest {
   }
 
   @Test
-  public void canGetAirplane_whenGetAirplaneWithId_thenStatus200()
-    throws Exception {
+  void canGetAirplane_whenGetAirplaneWithId_thenStatus200() throws Exception {
     Airplane airplane = createAirplane(airplaneType777);
     mvc
       .perform(get("/airplanes/{id}", airplane.getId()))
@@ -148,7 +146,7 @@ public class AirplaneControllerIntTest {
   }
 
   @Test
-  public void cannotGetAirplane_whenGetAirplaneWithInvalidId_thenStatus404()
+  void cannotGetAirplane_whenGetAirplaneWithInvalidId_thenStatus404()
     throws Exception {
     mvc
       .perform(get("/airplanes/{id}", 2))
@@ -165,7 +163,7 @@ public class AirplaneControllerIntTest {
     POST Tests
    */
   @Test
-  public void canCreateAirplane_whenPostAirplaneWithValidData_thenStatus201()
+  void canCreateAirplane_whenPostAirplaneWithValidData_thenStatus201()
     throws Exception {
     CreateAirplaneDto createAirplaneDto = new CreateAirplaneDto();
     createAirplaneDto.setAirplaneTypeId(airplaneType777.getId());
@@ -202,7 +200,7 @@ public class AirplaneControllerIntTest {
   }
 
   @Test
-  public void cannotCreateAirplane_whenPostAirplaneWithInvalidAirplaneType_thenStatus404()
+  void cannotCreateAirplane_whenPostAirplaneWithInvalidAirplaneType_thenStatus404()
     throws Exception {
     CreateAirplaneDto createAirplaneDto = new CreateAirplaneDto();
     createAirplaneDto.setAirplaneTypeId(123L);
@@ -226,7 +224,7 @@ public class AirplaneControllerIntTest {
     PUT Tests
    */
   @Test
-  public void canUpdateAirplane_whenPutAirplaneWithValidId_thenStatus204()
+  void canUpdateAirplane_whenPutAirplaneWithValidId_thenStatus204()
     throws Exception {
     Airplane airplane = createAirplane(airplaneType777);
     UpdateAirplaneDto updateAirplaneDto = new UpdateAirplaneDto();
@@ -253,7 +251,7 @@ public class AirplaneControllerIntTest {
   }
 
   @Test
-  public void cannotUpdateAirplane_whenPutAirplaneWithInvalidId_thenStatus404()
+  void cannotUpdateAirplane_whenPutAirplaneWithInvalidId_thenStatus404()
     throws Exception {
     UpdateAirplaneDto updateAirplaneDto = new UpdateAirplaneDto();
     updateAirplaneDto.setAirplaneTypeId(Optional.of(airplaneType737.getId()));
@@ -274,7 +272,7 @@ public class AirplaneControllerIntTest {
   }
 
   @Test
-  public void cannotUpdateAirplane_whenPutAirplaneWithInvalidAirplaneType_thenStatus404()
+  void cannotUpdateAirplane_whenPutAirplaneWithInvalidAirplaneType_thenStatus404()
     throws Exception {
     Airplane airplane = createAirplane(airplaneType777);
     UpdateAirplaneDto updateAirplaneDto = new UpdateAirplaneDto();
@@ -299,7 +297,7 @@ public class AirplaneControllerIntTest {
     DELETE Tests
    */
   @Test
-  public void canDeleteAirplane_whenDeleteAirplaneWithValidId_thenStatus204()
+  void canDeleteAirplane_whenDeleteAirplaneWithValidId_thenStatus204()
     throws Exception {
     Airplane airplane = createAirplane(airplaneType777);
     mvc
@@ -312,7 +310,7 @@ public class AirplaneControllerIntTest {
   }
 
   @Test
-  public void cannotDeleteAirplane_whenDeleteAirplaneWithInvalidId_thenStatus404()
+  void cannotDeleteAirplane_whenDeleteAirplaneWithInvalidId_thenStatus404()
     throws Exception {
     mvc
       .perform(delete("/airplanes/{id}", 2))
@@ -326,7 +324,7 @@ public class AirplaneControllerIntTest {
   }
 
   @Test
-  public void cannotDeleteAirplane_whenDeleteAirplaneWithAssociatedFlights_thenStatus405()
+  void cannotDeleteAirplane_whenDeleteAirplaneWithAssociatedFlights_thenStatus405()
     throws Exception {
     Airplane airplane = createAirplane(airplaneType777);
     createFlight(airplane);
