@@ -362,6 +362,7 @@ class RouteControllerIntTest {
   @Test
   void cannotUpdateRoute_whenPutRouteWithDuplicateRoute_thenStatus409()
     throws Exception {
+    createRoute(airportLAX, airportSFO);
     Route route2 = createRoute(airportLAX, airportPDX);
     UpdateRouteDto updateRouteDto = new UpdateRouteDto();
     updateRouteDto.setDestinationAirportId(Optional.of("SFO"));
