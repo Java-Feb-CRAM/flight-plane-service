@@ -20,12 +20,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FlightDao extends JpaRepository<Flight, Long> {
   Optional<Flight[]> findAllByRouteAndDepartureTime(Route route,
-      Instant departure_time);
+      Instant departureTime);
 
   Optional<Flight[]> findAllByRoute(Route route);
 
   @Query("select flight from Flight flight "
       + "where flight.route.id = :route_id "
       + "and flight.reservedSeats < flight.airplane.airplaneType.maxCapacity")
-  Flight[] findAllByRouteIdAndHasVacancy(Long route_id);
+  Flight[] findAllByRouteIdAndHasVacancy(Long routeId);
 }

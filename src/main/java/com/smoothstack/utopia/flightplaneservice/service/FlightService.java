@@ -66,7 +66,7 @@ public class FlightService {
       final Integer stops, String firstOriginIataId)
   {
     if (stops > 0) {
-      List<List<Flight>> pathsOfFlights = new ArrayList<List<Flight>>();
+      List<List<Flight>> pathsOfFlights = new ArrayList<>();
       Stream
           .of(getAllFlightsWithMatchingOriginAirportInFlightRoute(originIataId, firstOriginIataId))
           .forEach(originFlight ->
@@ -103,8 +103,8 @@ public class FlightService {
   public List<List<Flight>> getFlightPathDestinationFlights(String originIataId,
       String destinationIataId)
   {
-    List<List<Flight>> pathsOfFlights = new ArrayList<List<Flight>>();
-    List<Flight> path = new ArrayList<Flight>();
+    List<List<Flight>> pathsOfFlights = new ArrayList<>();
+    List<Flight> path = new ArrayList<>();
     Stream.of(getAllNoStopFlights(originIataId, destinationIataId))
         .forEach(flight ->
         {
@@ -144,7 +144,8 @@ public class FlightService {
         .map(
             route -> flightDao.findAllByRoute(route)
                 .orElseThrow(FlightNotFoundException::new)
-        ).flatMap(flights -> Stream.of(flights)).toArray(Flight[]::new);
+        ).flatMap(Stream::of)
+        .toArray(Flight[]::new);
   }
   
   public Flight createFlight(CreateFlightDto createFlightDto) {
