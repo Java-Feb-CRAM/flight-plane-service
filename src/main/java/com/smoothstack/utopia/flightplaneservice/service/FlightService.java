@@ -126,7 +126,8 @@ public class FlightService {
         );
 
     if (route.isPresent()) {
-        return flightDao.findAllByRouteIdAndHasVacancy(route.get().getId());
+        return Stream.of(flightDao.findAllByRouteId(route.get().getId()).orElseThrow(FlightNotFoundException::new))
+            .filter(flight -> flight.getAvailableSeats() > 0).toArray(Flight[]::new);
     }
     return new Flight[0];
   }
