@@ -11,4 +11,4 @@ import org.springframework.web.bind.annotation.ResponseStatus;
   value = HttpStatus.METHOD_NOT_ALLOWED,
   reason = "The requested airplane type cannot be deleted because it has airplanes associated with it"
 )
-public class AirplaneTypeDeletionNotAllowedException extends RuntimeException {}
+public class AirplaneTypeDeletionNotAllowedException extends RuntimeException { private static final long serialVersionUID = 1L; }
