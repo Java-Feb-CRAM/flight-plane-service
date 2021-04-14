@@ -25,7 +25,7 @@ public interface FlightDao extends JpaRepository<Flight, Long> {
   Optional<Flight[]> findAllByRoute(Route route);
 
   @Query("select flight from Flight flight "
-      + "where flight.route.id = :route_id "
+      + "where flight.route.id = :routeId "
       + "and flight.reservedSeats < flight.airplane.airplaneType.maxCapacity")
   Flight[] findAllByRouteIdAndHasVacancy(Long routeId);
 }
