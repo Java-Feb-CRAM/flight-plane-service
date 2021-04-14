@@ -16,5 +16,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AirportDao extends JpaRepository<Airport, String> {
-  Optional<Airport> findByIataId(String idata_id);
+  Optional<Airport> findByIataId(String iata_id);
 }

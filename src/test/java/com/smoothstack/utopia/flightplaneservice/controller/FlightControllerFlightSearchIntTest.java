@@ -38,7 +38,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 @TestPropertySource(
     locations = "classpath:application-integrationtest.properties")
-public class FlightControllerFlightSearchIntTest {
+class FlightControllerFlightSearchIntTest {
 
   private final String URI =
       "/flights/origin/%s/destination/%s/departure/%d/search/";
@@ -237,7 +237,7 @@ public class FlightControllerFlightSearchIntTest {
   }
 
   @Test
-  public void
+  void
       XmlInputForFlightOriginDestinationUnfilteredOriginDepartureZeroStops_GetNonStopFlight_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
           throws Exception,
           JsonProcessingException
@@ -272,7 +272,7 @@ public class FlightControllerFlightSearchIntTest {
   }
 
   @Test
-  public void
+  void
       XmlInputForFlightOriginDestinationUnfilteredOriginDepartureOneHundredStops_GetConnectingFlightsWithin4Stops_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
           throws Exception,
           JsonProcessingException
