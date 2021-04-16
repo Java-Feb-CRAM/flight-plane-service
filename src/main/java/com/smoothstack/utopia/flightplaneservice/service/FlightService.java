@@ -14,21 +14,19 @@ import com.smoothstack.utopia.flightplaneservice.exception.RouteNotFoundExceptio
 import com.smoothstack.utopia.shared.model.Airplane;
 import com.smoothstack.utopia.shared.model.Flight;
 import com.smoothstack.utopia.shared.model.Route;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * @author Rob Maes
  * Mar 18 2021
- * 
+ *
  * @editor Craig Saunders UT-60 flight search
- * 
+ *
  */
 @Service
 public class FlightService {
@@ -60,95 +58,128 @@ public class FlightService {
       .findById(flightId)
       .orElseThrow(FlightNotFoundException::new);
   }
-  
-  public List<List<Flight>> getAllMultiStopFlights(String originIataId,
-      String destinationIataId,
-      final Integer stops, String firstOriginIataId)
-  {
+
+  public List<List<Flight>> getAllMultiStopFlights(
+    String originIataId,
+    String destinationIataId,
+    final Integer stops,
+    String firstOriginIataId
+  ) {
     if (stops > 0) {
       List<List<Flight>> pathsOfFlights = new ArrayList<>();
       Stream
-          .of(getAllFlightsWithMatchingOriginAirportInFlightRoute(originIataId, firstOriginIataId))
-          .forEach(originFlight ->
-          {
+        .of(
+          getAllFlightsWithMatchingOriginAirportInFlightRoute(
+            originIataId,
+            firstOriginIataId
+          )
+        )
+        .forEach(
+          originFlight -> {
             if (
-              originFlight.getRoute().getDestinationAirport().getIataId()
-                  .equals(destinationIataId)
+              originFlight
+                .getRoute()
+                .getDestinationAirport()
+                .getIataId()
+                .equals(destinationIataId)
             ) {
               pathsOfFlights.addAll(
-                  getFlightPathDestinationFlights(
-                      originIataId,
-                      destinationIataId
-                  )
+                getFlightPathDestinationFlights(originIataId, destinationIataId)
               );
             } else {
               getAllMultiStopFlights(
-                  originFlight.getRoute().getDestinationAirport().getIataId(),
-                  destinationIataId,
-                  stops - 1,
-                  firstOriginIataId
-              ).stream().forEach(returnedFlightPath ->
-          {
-                returnedFlightPath.add(0, originFlight);
-                pathsOfFlights.add(returnedFlightPath);
-              });
+                originFlight.getRoute().getDestinationAirport().getIataId(),
+                destinationIataId,
+                stops - 1,
+                firstOriginIataId
+              )
+                .stream()
+                .forEach(
+                  returnedFlightPath -> {
+                    returnedFlightPath.add(0, originFlight);
+                    pathsOfFlights.add(returnedFlightPath);
+                  }
+                );
             }
-          });
+          }
+        );
       return pathsOfFlights;
     } else {
       return getFlightPathDestinationFlights(originIataId, destinationIataId);
     }
   }
 
-  public List<List<Flight>> getFlightPathDestinationFlights(String originIataId,
-      String destinationIataId)
-  {
+  public List<List<Flight>> getFlightPathDestinationFlights(
+    String originIataId,
+    String destinationIataId
+  ) {
     List<List<Flight>> pathsOfFlights = new ArrayList<>();
     List<Flight> path = new ArrayList<>();
-    Stream.of(getAllNoStopFlights(originIataId, destinationIataId))
-        .forEach(flight ->
-        {
+    Stream
+      .of(getAllNoStopFlights(originIataId, destinationIataId))
+      .forEach(
+        flight -> {
           path.add(flight);
           pathsOfFlights.add(path);
-        });
+        }
+      );
     return pathsOfFlights;
   }
 
-  private Flight[] getAllNoStopFlights(String originIataId,
-      String destinationIataId)
-  {
-    Optional<Route> route =
-        routeDao.findRouteByOriginAirportAndDestinationAirport(
-            airportDao.findByIataId(originIataId)
-                .orElseThrow(AirportNotFoundException::new),
-            airportDao.findByIataId(destinationIataId)
-                .orElseThrow(AirportNotFoundException::new)
-        );
+  private Flight[] getAllNoStopFlights(
+    String originIataId,
+    String destinationIataId
+  ) {
+    Optional<Route> route = routeDao.findRouteByOriginAirportAndDestinationAirport(
+      airportDao
+        .findByIataId(originIataId)
+        .orElseThrow(AirportNotFoundException::new),
+      airportDao
+        .findByIataId(destinationIataId)
+        .orElseThrow(AirportNotFoundException::new)
+    );
 
     if (route.isPresent()) {
-        return Stream.of(flightDao.findAllByRouteId(route.get().getId()).orElseThrow(FlightNotFoundException::new))
-            .filter(flight -> flight.getAvailableSeats() > 0).toArray(Flight[]::new);
+      return Stream
+        .of(
+          flightDao
+            .findAllByRouteId(route.get().getId())
+            .orElseThrow(FlightNotFoundException::new)
+        )
+        .filter(flight -> flight.getAvailableSeats() > 0)
+        .toArray(Flight[]::new);
     }
     return new Flight[0];
   }
 
-  private Flight[]
-      getAllFlightsWithMatchingOriginAirportInFlightRoute(String originIataId, String firstOriginIataId)
-  {
+  private Flight[] getAllFlightsWithMatchingOriginAirportInFlightRoute(
+    String originIataId,
+    String firstOriginIataId
+  ) {
     return Stream
-        .of(
-            routeDao.findAllRoutesByOriginAirport(
-                airportDao.findByIataId(originIataId)
-                    .orElseThrow(AirportNotFoundException::new)
-            ).orElseThrow(RouteNotFoundException::new)
-        ).filter(route -> !route.getDestinationAirport().getIataId().equals(firstOriginIataId))
-        .map(
-            route -> flightDao.findAllByRoute(route)
-                .orElseThrow(FlightNotFoundException::new)
-        ).flatMap(Stream::of)
-        .toArray(Flight[]::new);
+      .of(
+        routeDao
+          .findAllRoutesByOriginAirport(
+            airportDao
+              .findByIataId(originIataId)
+              .orElseThrow(AirportNotFoundException::new)
+          )
+          .orElseThrow(RouteNotFoundException::new)
+      )
+      .filter(
+        route ->
+          !route.getDestinationAirport().getIataId().equals(firstOriginIataId)
+      )
+      .map(
+        route ->
+          flightDao
+            .findAllByRoute(route)
+            .orElseThrow(FlightNotFoundException::new)
+      )
+      .flatMap(Stream::of)
+      .toArray(Flight[]::new);
   }
-  
+
   public Flight createFlight(CreateFlightDto createFlightDto) {
     Route route = routeDao
       .findById(createFlightDto.getRouteId())

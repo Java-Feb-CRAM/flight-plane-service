@@ -11,4 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
   value = HttpStatus.CONFLICT,
   reason = "A route with this ID already exists"
 )
-public class DuplicateRouteException extends RuntimeException { private static final long serialVersionUID = 1L; }
+public class DuplicateRouteException extends RuntimeException {
+
+  private static final long serialVersionUID = 1L;
+}

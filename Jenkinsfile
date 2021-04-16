@@ -68,6 +68,11 @@ pipeline {
         echo 'Pushing docker image to ECR..'
         sh "docker push 038778514259.dkr.ecr.us-east-1.amazonaws.com/utopia-flight-plane:$COMMIT_HASH"
       }
+      post {
+        always {
+          jiraSendBuildInfo site: 'java-feb-cram.atlassian.net'
+        }
+      }
     }
     stage('Deploy') {
       steps {
@@ -77,6 +82,11 @@ pipeline {
         sh "wget https://raw.githubusercontent.com/Java-Feb-CRAM/cloud-formation/main/ECS.yml"
         echo 'Deploying cloudformation..'
         sh "aws cloudformation deploy --stack-name UtopiaFlightPlaneMS --template-file ./ECS.yml --parameter-overrides ApplicationName=FlightPlaneMS ECRepositoryUri=038778514259.dkr.ecr.us-east-1.amazonaws.com/utopia-flight-plane:$COMMIT_HASH ExecutionRoleArn=arn:aws:iam::038778514259:role/ecsTaskExecutionRole TargetGroupArn=arn:aws:elasticloadbalancing:us-east-1:038778514259:targetgroup/FlightPlaneTG/89c35ebca3b8e8fe --role-arn arn:aws:iam::038778514259:role/CloudFormationECS --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --region us-east-1"
+      }
+      post {
+        always {
+          jiraSendDeploymentInfo site: 'java-feb-cram.atlassian.net', environmentId: 'us-prod-1', environmentName: 'us-prod-1', environmentType: 'production'
+        }
       }
     }
     stage('Cleanup') {

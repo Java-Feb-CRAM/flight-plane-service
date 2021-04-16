@@ -11,4 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
   value = HttpStatus.NOT_FOUND,
   reason = "The requested airplane does not exist"
 )
-public class AirplaneNotFoundException extends RuntimeException { private static final long serialVersionUID = 1L; }
+public class AirplaneNotFoundException extends RuntimeException {
+
+  private static final long serialVersionUID = 1L;
+}
