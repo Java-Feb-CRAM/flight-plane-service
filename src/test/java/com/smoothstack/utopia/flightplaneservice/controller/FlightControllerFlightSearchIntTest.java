@@ -31,17 +31,18 @@ import org.springframework.test.web.servlet.MockMvc;
 
 /**
  * @author Craig Saunders
- * 
+ *
  *         template by Rob Maes Mar 21 2021
  */
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(
-    locations = "classpath:application-integrationtest.properties")
+  locations = "classpath:application-integrationtest.properties"
+)
 class FlightControllerFlightSearchIntTest {
 
   private final String URI =
-      "/flights/origin/%s/destination/%s/departure/%d/search/";
+    "/flights/origin/%s/destination/%s/departure/%d/search/";
 
   @Autowired
   MockMvc mvc;
@@ -93,12 +94,13 @@ class FlightControllerFlightSearchIntTest {
   private Instant filteredOriginDepartureInstant;
   private Instant roundTripOriginDepartureInstant;
 
-  private Flight createFlight(Route route,
-      Airplane airplane,
-      Instant departureTime,
-      Float seatPrice,
-      Integer reservedSeats)
-  {
+  private Flight createFlight(
+    Route route,
+    Airplane airplane,
+    Instant departureTime,
+    Float seatPrice,
+    Integer reservedSeats
+  ) {
     Flight flight = new Flight();
     flight.setRoute(route);
     flight.setAirplane(airplane);
@@ -186,123 +188,128 @@ class FlightControllerFlightSearchIntTest {
 
     flights = new ArrayList<Flight>();
     flights.add(
-        this.createFlight(routeJFKtoORD, unfilteredOriginDepartureInstant)
+      this.createFlight(routeJFKtoORD, unfilteredOriginDepartureInstant)
     );
     flights.add(
-        this.createFlight(routeORDtoDEN, unfilteredOriginDepartureInstant)
+      this.createFlight(routeORDtoDEN, unfilteredOriginDepartureInstant)
     );
     flights.add(
-        this.createFlight(routeDENtoSFO, unfilteredOriginDepartureInstant)
+      this.createFlight(routeDENtoSFO, unfilteredOriginDepartureInstant)
     );
     flights.add(
-        this.createFlight(routeJFKtoSFO, unfilteredOriginDepartureInstant)
-    );
-    flights
-        .add(this.createFlight(routeSFOtoJFK, roundTripOriginDepartureInstant));
-    flights
-        .add(this.createFlight(routeSFOtoDEN, roundTripOriginDepartureInstant));
-    flights
-        .add(this.createFlight(routeDENtoORD, roundTripOriginDepartureInstant));
-    flights
-        .add(this.createFlight(routeORDtoJFK, roundTripOriginDepartureInstant));
-    flights
-        .add(this.createFlight(routeJFKtoDEN, filteredOriginDepartureInstant));
-    flights.add(
-        this.createFlight(routeDENtoJFK, unfilteredOriginDepartureInstant)
+      this.createFlight(routeJFKtoSFO, unfilteredOriginDepartureInstant)
     );
     flights.add(
-        this.createFlight(routeSEAtoJFK, unfilteredOriginDepartureInstant)
+      this.createFlight(routeSFOtoJFK, roundTripOriginDepartureInstant)
     );
     flights.add(
-        this.createFlight(routeDENtoSEA, unfilteredOriginDepartureInstant)
+      this.createFlight(routeSFOtoDEN, roundTripOriginDepartureInstant)
     );
     flights.add(
-        this.createFlight(routeSLCtoGCK, unfilteredOriginDepartureInstant)
-    );
-    flights
-        .add(this.createFlight(routeSLCtoGCK, filteredOriginDepartureInstant));
-    flights.add(
-        this.createFlight(routeGCKtoORD, unfilteredOriginDepartureInstant)
+      this.createFlight(routeDENtoORD, roundTripOriginDepartureInstant)
     );
     flights.add(
-        this.createFlight(routeORDtoSLC, unfilteredOriginDepartureInstant)
+      this.createFlight(routeORDtoJFK, roundTripOriginDepartureInstant)
     );
-    flights
-        .add(this.createFlight(routeSLCtoORD, roundTripOriginDepartureInstant));
-    flights
-        .add(this.createFlight(routeORDtoGCK, roundTripOriginDepartureInstant));
-    flights
-        .add(this.createFlight(routeGCKtoSLC, roundTripOriginDepartureInstant));
+    flights.add(
+      this.createFlight(routeJFKtoDEN, filteredOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeDENtoJFK, unfilteredOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeSEAtoJFK, unfilteredOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeDENtoSEA, unfilteredOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeSLCtoGCK, unfilteredOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeSLCtoGCK, filteredOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeGCKtoORD, unfilteredOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeORDtoSLC, unfilteredOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeSLCtoORD, roundTripOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeORDtoGCK, roundTripOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeGCKtoSLC, roundTripOriginDepartureInstant)
+    );
     // routeLAXtoSFO = createRoute(airportLAX, airportSFO);
   }
 
   @Test
-  void
-      XmlInputForFlightOriginDestinationUnfilteredOriginDepartureZeroStops_GetNonStopFlight_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
-          throws Exception,
-          JsonProcessingException
-  {
+  void XmlInputForFlightOriginDestinationUnfilteredOriginDepartureZeroStops_GetNonStopFlight_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
+    throws Exception, JsonProcessingException {
     Integer stops = 0;
     String originIataId = "JFK";
     String destinationIataId = "SFO";
-    String UNFILTERED_URI = String.format(
+    String UNFILTERED_URI =
+      String.format(
         URI,
         originIataId,
         destinationIataId,
         unfilteredOriginDepartureInstant.getEpochSecond()
-    ) + stops;
+      ) +
+      stops;
 
-    mvc.perform(
-        get(UNFILTERED_URI).accept(MediaType.APPLICATION_XML)
-            .contentType(MediaType.APPLICATION_XML)
-    ).andExpect(status().isOk())
-        .andExpect(
-            content().contentTypeCompatibleWith(MediaType.APPLICATION_XML)
-        )
-        .andExpect(
-            xpath("Set/item[1]/route/originAirport/iataId")
-                .string(is(originIataId))
-        )
-        .andExpect(
-            xpath("Set/item[last()]/route/destinationAirport/iataId")
-                .string(is(destinationIataId))
-        ).andExpect(
-            xpath("count(Set/item) <= " + (stops + 1)).booleanValue(true)
-        );
+    mvc
+      .perform(
+        get(UNFILTERED_URI)
+          .accept(MediaType.APPLICATION_XML)
+          .contentType(MediaType.APPLICATION_XML)
+      )
+      .andExpect(status().isOk())
+      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
+      .andExpect(
+        xpath("Set/item[1]/route/originAirport/iataId").string(is(originIataId))
+      )
+      .andExpect(
+        xpath("Set/item[last()]/route/destinationAirport/iataId")
+          .string(is(destinationIataId))
+      )
+      .andExpect(xpath("count(Set/item) <= " + (stops + 1)).booleanValue(true));
   }
 
   @Test
-  void
-      XmlInputForFlightOriginDestinationUnfilteredOriginDepartureOneHundredStops_GetConnectingFlightsWithin4Stops_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
-          throws Exception,
-          JsonProcessingException
-  {
+  void XmlInputForFlightOriginDestinationUnfilteredOriginDepartureOneHundredStops_GetConnectingFlightsWithin4Stops_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
+    throws Exception, JsonProcessingException {
     Integer stops = 100;
     String originIataId = "JFK";
     String destinationIataId = "SFO";
-    String UNFILTERED_URI = String.format(
+    String UNFILTERED_URI =
+      String.format(
         URI,
         originIataId,
         destinationIataId,
         unfilteredOriginDepartureInstant.getEpochSecond()
-    ) + stops;
+      ) +
+      stops;
 
-    mvc.perform(
-        get(UNFILTERED_URI).accept(MediaType.APPLICATION_XML)
-            .contentType(MediaType.APPLICATION_XML)
-    ).andExpect(status().isOk())
-        .andExpect(
-            content().contentTypeCompatibleWith(MediaType.APPLICATION_XML)
-        )
-        .andExpect(
-            xpath("Set/item[1]/route/originAirport/iataId")
-                .string(is(originIataId))
-        )
-        .andExpect(
-            xpath("Set/item[last()]/route/destinationAirport/iataId")
-                .string(is(destinationIataId))
-        ).andExpect(
-            xpath("count(Set/item) <= " + (stops + 1)).booleanValue(true)
-        );
+    mvc
+      .perform(
+        get(UNFILTERED_URI)
+          .accept(MediaType.APPLICATION_XML)
+          .contentType(MediaType.APPLICATION_XML)
+      )
+      .andExpect(status().isOk())
+      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
+      .andExpect(
+        xpath("Set/item[1]/route/originAirport/iataId").string(is(originIataId))
+      )
+      .andExpect(
+        xpath("Set/item[last()]/route/destinationAirport/iataId")
+          .string(is(destinationIataId))
+      )
+      .andExpect(xpath("count(Set/item) <= " + (stops + 1)).booleanValue(true));
   }
 }

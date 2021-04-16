@@ -11,4 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
   value = HttpStatus.CONFLICT,
   reason = "An airport with this ID already exists"
 )
-public class DuplicateAirportException extends RuntimeException { private static final long serialVersionUID = 1L; }
+public class DuplicateAirportException extends RuntimeException {
+
+  private static final long serialVersionUID = 1L;
+}
