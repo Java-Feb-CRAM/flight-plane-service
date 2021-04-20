@@ -17,6 +17,8 @@ import com.smoothstack.utopia.shared.model.AirplaneType;
 import com.smoothstack.utopia.shared.model.Airport;
 import com.smoothstack.utopia.shared.model.Flight;
 import com.smoothstack.utopia.shared.model.Route;
+
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +44,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class FlightControllerFlightSearchIntTest {
 
   private final String URI =
-    "/flights/origin/%s/destination/%s/departure/%d/search/";
+    "/flights/origin/%s/destination/%s/from/%d/to/%d/search/";
 
   @Autowired
   MockMvc mvc;
@@ -90,8 +92,8 @@ class FlightControllerFlightSearchIntTest {
   private List<Flight> flights;
   private AirplaneType airplaneType777;
   private Airplane airplane;
-  private Instant unfilteredOriginDepartureInstant;
-  private Instant filteredOriginDepartureInstant;
+  private Instant firstOriginDepartureInstant;
+  private Instant secondOriginDepartureInstant;
   private Instant roundTripOriginDepartureInstant;
 
   private Flight createFlight(
@@ -179,25 +181,25 @@ class FlightControllerFlightSearchIntTest {
     routeORDtoGCK = createRoute(airportORD, airportGCK);
     routeGCKtoSLC = createRoute(airportGCK, airportSLC);
 
-    filteredOriginDepartureInstant = Instant.ofEpochSecond(1614531600);
-    unfilteredOriginDepartureInstant = Instant.ofEpochSecond(1614542400);
-    roundTripOriginDepartureInstant = Instant.ofEpochSecond(1614553200);
+    firstOriginDepartureInstant = Instant.now().plus(Duration.ofDays(3));
+    secondOriginDepartureInstant = Instant.now().plus(Duration.ofDays(4));
+    roundTripOriginDepartureInstant = Instant.now().plus(Duration.ofDays(6));
 
     airplaneType777 = createAirplaneType(777);
     airplane = createAirplane(airplaneType777);
 
     flights = new ArrayList<Flight>();
     flights.add(
-      this.createFlight(routeJFKtoORD, unfilteredOriginDepartureInstant)
+      this.createFlight(routeJFKtoORD, secondOriginDepartureInstant)
     );
     flights.add(
-      this.createFlight(routeORDtoDEN, unfilteredOriginDepartureInstant)
+      this.createFlight(routeORDtoDEN, secondOriginDepartureInstant)
     );
     flights.add(
-      this.createFlight(routeDENtoSFO, unfilteredOriginDepartureInstant)
+      this.createFlight(routeDENtoSFO, secondOriginDepartureInstant)
     );
     flights.add(
-      this.createFlight(routeJFKtoSFO, unfilteredOriginDepartureInstant)
+      this.createFlight(routeJFKtoSFO, secondOriginDepartureInstant)
     );
     flights.add(
       this.createFlight(routeSFOtoJFK, roundTripOriginDepartureInstant)
@@ -212,28 +214,28 @@ class FlightControllerFlightSearchIntTest {
       this.createFlight(routeORDtoJFK, roundTripOriginDepartureInstant)
     );
     flights.add(
-      this.createFlight(routeJFKtoDEN, filteredOriginDepartureInstant)
+      this.createFlight(routeJFKtoDEN, firstOriginDepartureInstant)
     );
     flights.add(
-      this.createFlight(routeDENtoJFK, unfilteredOriginDepartureInstant)
+      this.createFlight(routeDENtoJFK, secondOriginDepartureInstant)
     );
     flights.add(
-      this.createFlight(routeSEAtoJFK, unfilteredOriginDepartureInstant)
+      this.createFlight(routeSEAtoJFK, secondOriginDepartureInstant)
     );
     flights.add(
-      this.createFlight(routeDENtoSEA, unfilteredOriginDepartureInstant)
+      this.createFlight(routeDENtoSEA, secondOriginDepartureInstant)
     );
     flights.add(
-      this.createFlight(routeSLCtoGCK, unfilteredOriginDepartureInstant)
+      this.createFlight(routeSLCtoGCK, secondOriginDepartureInstant)
     );
     flights.add(
-      this.createFlight(routeSLCtoGCK, filteredOriginDepartureInstant)
+      this.createFlight(routeSLCtoGCK, firstOriginDepartureInstant)
     );
     flights.add(
-      this.createFlight(routeGCKtoORD, unfilteredOriginDepartureInstant)
+      this.createFlight(routeGCKtoORD, secondOriginDepartureInstant)
     );
     flights.add(
-      this.createFlight(routeORDtoSLC, unfilteredOriginDepartureInstant)
+      this.createFlight(routeORDtoSLC, secondOriginDepartureInstant)
     );
     flights.add(
       this.createFlight(routeSLCtoORD, roundTripOriginDepartureInstant)
@@ -248,23 +250,24 @@ class FlightControllerFlightSearchIntTest {
   }
 
   @Test
-  void XmlInputForFlightOriginDestinationUnfilteredOriginDepartureZeroStops_GetNonStopFlight_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
+  void XmlInputForFlightOriginDestinationZeroStops_GetNonStopFlight_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
     throws Exception, JsonProcessingException {
     Integer stops = 0;
     String originIataId = "JFK";
     String destinationIataId = "SFO";
-    String UNFILTERED_URI =
+    String builtUri =
       String.format(
         URI,
         originIataId,
         destinationIataId,
-        unfilteredOriginDepartureInstant.getEpochSecond()
+        Instant.now().plus(Duration.ofDays(2)).getEpochSecond(),
+        Instant.now().plus(Duration.ofDays(5)).getEpochSecond()
       ) +
       stops;
 
     mvc
       .perform(
-        get(UNFILTERED_URI)
+        get(builtUri)
           .accept(MediaType.APPLICATION_XML)
           .contentType(MediaType.APPLICATION_XML)
       )
@@ -281,23 +284,24 @@ class FlightControllerFlightSearchIntTest {
   }
 
   @Test
-  void XmlInputForFlightOriginDestinationUnfilteredOriginDepartureOneHundredStops_GetConnectingFlightsWithin4Stops_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
+  void XmlInputForFlightOriginDestinationOneHundredStops_GetConnectingFlightsWithin4Stops_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
     throws Exception, JsonProcessingException {
-    Integer stops = 100;
+    Integer stops = 100; // setting to 100 does not matter as the stops are hard coded to 4 max
     String originIataId = "JFK";
     String destinationIataId = "SFO";
-    String UNFILTERED_URI =
+    String builtUri =
       String.format(
         URI,
         originIataId,
         destinationIataId,
-        unfilteredOriginDepartureInstant.getEpochSecond()
+        Instant.now().plus(Duration.ofDays(2)).getEpochSecond(),
+        Instant.now().plus(Duration.ofDays(5)).getEpochSecond()
       ) +
       stops;
 
     mvc
       .perform(
-        get(UNFILTERED_URI)
+        get(builtUri)
           .accept(MediaType.APPLICATION_XML)
           .contentType(MediaType.APPLICATION_XML)
       )
@@ -311,5 +315,60 @@ class FlightControllerFlightSearchIntTest {
           .string(is(destinationIataId))
       )
       .andExpect(xpath("count(Set/item) <= " + (stops + 1)).booleanValue(true));
+  }
+
+  @Test
+  void XmlInputForFlightOriginDestinationOneHundredStopsOutOfDateRange_GetNonStopFlight_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
+    throws Exception, JsonProcessingException {
+    Integer stops = 0;
+    String originIataId = "JFK";
+    String destinationIataId = "SFO";
+    String outOfDateRangeUri =
+      String.format(
+        URI,
+        originIataId,
+        destinationIataId,
+        Instant.now().plus(Duration.ofDays(1)).getEpochSecond(),
+        Instant.now().plus(Duration.ofDays(2)).getEpochSecond()
+      ) +
+      stops;
+
+    mvc
+      .perform(
+        get(outOfDateRangeUri)
+          .accept(MediaType.APPLICATION_XML)
+          .contentType(MediaType.APPLICATION_XML)
+      )
+      .andExpect(status().isOk())
+      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
+      .andExpect(content().string("<Set/>"));
+  }
+  
+
+  @Test
+  void XmlInputForFlightOriginDestinationOneHundredStopsBeforeCurrentDate_GetNonStopFlight_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()
+    throws Exception, JsonProcessingException {
+    Integer stops = 0;
+    String originIataId = "JFK";
+    String destinationIataId = "SFO";
+    String beforeCurrentDateUri =
+      String.format(
+        URI,
+        originIataId,
+        destinationIataId,
+        123L,
+        Instant.now().plus(Duration.ofDays(2)).getEpochSecond()
+      ) +
+      stops;
+
+    mvc
+      .perform(
+        get(beforeCurrentDateUri)
+          .accept(MediaType.APPLICATION_XML)
+          .contentType(MediaType.APPLICATION_XML)
+      )
+      .andExpect(status().isOk())
+      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
+      .andExpect(content().string("<Set/>"));
   }
 }

@@ -4,6 +4,9 @@ import com.smoothstack.utopia.flightplaneservice.dto.CreateFlightDto;
 import com.smoothstack.utopia.flightplaneservice.dto.UpdateFlightDto;
 import com.smoothstack.utopia.flightplaneservice.service.FlightService;
 import com.smoothstack.utopia.shared.model.Flight;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,12 +58,13 @@ public class FlightController {
   }
 
   @GetMapping(
-    path = "origin/{originIataId}/destination/{destinationIataId}/departure/{departureTime}/search/{stops}"
+    path = "origin/{originIataId}/destination/{destinationIataId}/from/{dateRangeStart}/to/{dateRangeEnd}/search/{stops}"
   )
   public Set<Flight[]> getAllMultiStopFlights(
     @PathVariable("originIataId") String originIataId,
     @PathVariable("destinationIataId") String destinationIataId,
-    @PathVariable("departureTime") Long departureTime,
+    @PathVariable("dateRangeStart") Long dateRangeStart,
+    @PathVariable("dateRangeEnd") Long dateRangeEnd,
     @PathVariable("stops") Integer stops
   ) {
     if (stops > 4) {
@@ -77,7 +81,9 @@ public class FlightController {
       .map(flightPath -> flightPath.toArray(Flight[]::new))
       .filter(
         flightPath ->
-          flightPath[0].getDepartureTime().getEpochSecond() == departureTime
+          flightPath[0].getDepartureTime().getEpochSecond() >= dateRangeStart
+             && flightPath[0].getDepartureTime().getEpochSecond() <= dateRangeEnd
+             && dateRangeStart > LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
       )
       .collect(Collectors.toSet());
   }
