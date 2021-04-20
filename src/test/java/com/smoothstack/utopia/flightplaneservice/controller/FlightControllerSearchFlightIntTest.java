@@ -22,6 +22,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +43,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource(
   locations = "classpath:application-integrationtest.properties"
 )
-class FlightControllerFlightSearchIntTest {
+class FlightControllerSearchFlightIntTest {
 
   private final String URI =
     "/flights/origin/%s/destination/%s/from/%d/to/%d/search/";
@@ -147,13 +149,17 @@ class FlightControllerFlightSearchIntTest {
     return airplaneType;
   }
 
-  @BeforeEach
-  public void wipeDb() {
+  @AfterEach
+  public void wipeDbAfterEach() {
     flightDao.deleteAll();
     airplaneDao.deleteAll();
     routeDao.deleteAll();
     airplaneTypeDao.deleteAll();
     airportDao.deleteAll();
+  }
+  
+  @BeforeEach
+  public void wipeDbBeforeEach() {
     airportJFK = createAirport("JFK", "New York");
     airportORD = createAirport("ORD", "Chicago");
     airportDEN = createAirport("DEN", "Denver");
@@ -246,7 +252,6 @@ class FlightControllerFlightSearchIntTest {
     flights.add(
       this.createFlight(routeGCKtoSLC, roundTripOriginDepartureInstant)
     );
-    // routeLAXtoSFO = createRoute(airportLAX, airportSFO);
   }
 
   @Test
