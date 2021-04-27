@@ -6,6 +6,7 @@ import com.smoothstack.utopia.flightplaneservice.dto.CreateRouteDto;
 import com.smoothstack.utopia.flightplaneservice.dto.UpdateRouteDto;
 import com.smoothstack.utopia.flightplaneservice.exception.AirportNotFoundException;
 import com.smoothstack.utopia.flightplaneservice.exception.DuplicateRouteException;
+import com.smoothstack.utopia.flightplaneservice.exception.InvalidRouteException;
 import com.smoothstack.utopia.flightplaneservice.exception.RouteDeletionNotAllowedException;
 import com.smoothstack.utopia.flightplaneservice.exception.RouteNotFoundException;
 import com.smoothstack.utopia.shared.model.Airport;
@@ -45,6 +46,9 @@ public class RouteService {
     Airport destinationAirport = airportDao
       .findById(createRouteDto.getDestinationAirportId())
       .orElseThrow(AirportNotFoundException::new);
+    if (originAirport.getIataId().equals(destinationAirport.getIataId())) {
+      throw new InvalidRouteException();
+    }
     routeDao
       .findRouteByOriginAirportAndDestinationAirport(
         originAirport,
@@ -84,6 +88,14 @@ public class RouteService {
           route.setDestinationAirport(destinationAirport);
         }
       );
+    if (
+      route
+        .getOriginAirport()
+        .getIataId()
+        .equals(route.getDestinationAirport().getIataId())
+    ) {
+      throw new InvalidRouteException();
+    }
     routeDao
       .findRouteByOriginAirportAndDestinationAirport(
         route.getOriginAirport(),
