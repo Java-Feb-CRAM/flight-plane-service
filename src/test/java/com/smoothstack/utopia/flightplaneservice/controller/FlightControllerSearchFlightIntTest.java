@@ -17,12 +17,10 @@ import com.smoothstack.utopia.shared.model.AirplaneType;
 import com.smoothstack.utopia.shared.model.Airport;
 import com.smoothstack.utopia.shared.model.Flight;
 import com.smoothstack.utopia.shared.model.Route;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -157,7 +155,7 @@ class FlightControllerSearchFlightIntTest {
     airplaneTypeDao.deleteAll();
     airportDao.deleteAll();
   }
-  
+
   @BeforeEach
   public void wipeDbBeforeEach() {
     airportJFK = createAirport("JFK", "New York");
@@ -195,18 +193,10 @@ class FlightControllerSearchFlightIntTest {
     airplane = createAirplane(airplaneType777);
 
     flights = new ArrayList<Flight>();
-    flights.add(
-      this.createFlight(routeJFKtoORD, secondOriginDepartureInstant)
-    );
-    flights.add(
-      this.createFlight(routeORDtoDEN, secondOriginDepartureInstant)
-    );
-    flights.add(
-      this.createFlight(routeDENtoSFO, secondOriginDepartureInstant)
-    );
-    flights.add(
-      this.createFlight(routeJFKtoSFO, secondOriginDepartureInstant)
-    );
+    flights.add(this.createFlight(routeJFKtoORD, secondOriginDepartureInstant));
+    flights.add(this.createFlight(routeORDtoDEN, secondOriginDepartureInstant));
+    flights.add(this.createFlight(routeDENtoSFO, secondOriginDepartureInstant));
+    flights.add(this.createFlight(routeJFKtoSFO, secondOriginDepartureInstant));
     flights.add(
       this.createFlight(routeSFOtoJFK, roundTripOriginDepartureInstant)
     );
@@ -219,30 +209,14 @@ class FlightControllerSearchFlightIntTest {
     flights.add(
       this.createFlight(routeORDtoJFK, roundTripOriginDepartureInstant)
     );
-    flights.add(
-      this.createFlight(routeJFKtoDEN, firstOriginDepartureInstant)
-    );
-    flights.add(
-      this.createFlight(routeDENtoJFK, secondOriginDepartureInstant)
-    );
-    flights.add(
-      this.createFlight(routeSEAtoJFK, secondOriginDepartureInstant)
-    );
-    flights.add(
-      this.createFlight(routeDENtoSEA, secondOriginDepartureInstant)
-    );
-    flights.add(
-      this.createFlight(routeSLCtoGCK, secondOriginDepartureInstant)
-    );
-    flights.add(
-      this.createFlight(routeSLCtoGCK, firstOriginDepartureInstant)
-    );
-    flights.add(
-      this.createFlight(routeGCKtoORD, secondOriginDepartureInstant)
-    );
-    flights.add(
-      this.createFlight(routeORDtoSLC, secondOriginDepartureInstant)
-    );
+    flights.add(this.createFlight(routeJFKtoDEN, firstOriginDepartureInstant));
+    flights.add(this.createFlight(routeDENtoJFK, secondOriginDepartureInstant));
+    flights.add(this.createFlight(routeSEAtoJFK, secondOriginDepartureInstant));
+    flights.add(this.createFlight(routeDENtoSEA, secondOriginDepartureInstant));
+    flights.add(this.createFlight(routeSLCtoGCK, secondOriginDepartureInstant));
+    flights.add(this.createFlight(routeSLCtoGCK, firstOriginDepartureInstant));
+    flights.add(this.createFlight(routeGCKtoORD, secondOriginDepartureInstant));
+    flights.add(this.createFlight(routeORDtoSLC, secondOriginDepartureInstant));
     flights.add(
       this.createFlight(routeSLCtoORD, roundTripOriginDepartureInstant)
     );
@@ -348,7 +322,6 @@ class FlightControllerSearchFlightIntTest {
       .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
       .andExpect(content().string("<Set/>"));
   }
-  
 
   @Test
   void XmlInputForFlightOriginDestinationOneHundredStopsBeforeCurrentDate_GetNonStopFlight_ThenStatus200_XmlOutput_AssertValidFlightPathAndValidStops()

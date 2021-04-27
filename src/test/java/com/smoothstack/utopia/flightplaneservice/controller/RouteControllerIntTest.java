@@ -20,6 +20,7 @@ import com.smoothstack.utopia.flightplaneservice.dto.CreateRouteDto;
 import com.smoothstack.utopia.flightplaneservice.dto.UpdateRouteDto;
 import com.smoothstack.utopia.flightplaneservice.exception.AirportNotFoundException;
 import com.smoothstack.utopia.flightplaneservice.exception.DuplicateRouteException;
+import com.smoothstack.utopia.flightplaneservice.exception.InvalidRouteException;
 import com.smoothstack.utopia.flightplaneservice.exception.RouteDeletionNotAllowedException;
 import com.smoothstack.utopia.flightplaneservice.exception.RouteNotFoundException;
 import com.smoothstack.utopia.shared.model.Airplane;
@@ -263,6 +264,28 @@ class RouteControllerIntTest {
       );
   }
 
+  @Test
+  void cannotCreateRoute_whenPostRouteWithSameOriginAndDestination_thenStatus400()
+    throws Exception {
+    CreateRouteDto createRouteDto = new CreateRouteDto();
+    createRouteDto.setOriginAirportId("LAX");
+    createRouteDto.setDestinationAirportId("LAX");
+    mvc
+      .perform(
+        post("/routes")
+          .content(Utils.asJsonString(createRouteDto))
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isBadRequest())
+      .andExpect(
+        result ->
+          Assertions.assertTrue(
+            result.getResolvedException() instanceof InvalidRouteException
+          )
+      );
+  }
+
   /*
     PUT Tests
    */
@@ -355,6 +378,28 @@ class RouteControllerIntTest {
         result ->
           Assertions.assertTrue(
             result.getResolvedException() instanceof AirportNotFoundException
+          )
+      );
+  }
+
+  @Test
+  void cannotUpdateRoute_whenPutRouteWithSameOriginAndDestination_thenStatus400()
+    throws Exception {
+    Route route = createRoute(airportLAX, airportSFO);
+    UpdateRouteDto updateRouteDto = new UpdateRouteDto();
+    updateRouteDto.setDestinationAirportId(Optional.of("LAX"));
+    mvc
+      .perform(
+        put("/routes/{id}", route.getId())
+          .content(Utils.asJsonString(updateRouteDto))
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(status().isBadRequest())
+      .andExpect(
+        result ->
+          Assertions.assertTrue(
+            result.getResolvedException() instanceof InvalidRouteException
           )
       );
   }

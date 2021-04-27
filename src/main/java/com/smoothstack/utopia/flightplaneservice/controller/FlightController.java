@@ -4,7 +4,6 @@ import com.smoothstack.utopia.flightplaneservice.dto.CreateFlightDto;
 import com.smoothstack.utopia.flightplaneservice.dto.UpdateFlightDto;
 import com.smoothstack.utopia.flightplaneservice.service.FlightService;
 import com.smoothstack.utopia.shared.model.Flight;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -81,9 +80,9 @@ public class FlightController {
       .map(flightPath -> flightPath.toArray(Flight[]::new))
       .filter(
         flightPath ->
-          flightPath[0].getDepartureTime().getEpochSecond() >= dateRangeStart
-             && flightPath[0].getDepartureTime().getEpochSecond() <= dateRangeEnd
-             && dateRangeStart > LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+          flightPath[0].getDepartureTime().getEpochSecond() >= dateRangeStart &&
+          flightPath[0].getDepartureTime().getEpochSecond() <= dateRangeEnd &&
+          dateRangeStart > LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
       )
       .collect(Collectors.toSet());
   }
