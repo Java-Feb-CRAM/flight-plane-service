@@ -80,6 +80,8 @@ public class FlightController {
       .map(flightPath -> flightPath.toArray(Flight[]::new))
       .filter(
         flightPath ->
+          flightPath[flightPath.length-1].getRoute().getOriginAirport().getIataId().equals(originIataId) &&
+          flightPath[flightPath.length-1].getRoute().getDestinationAirport().getIataId().equals(destinationIataId) &&
           flightPath[0].getDepartureTime().getEpochSecond() >= dateRangeStart &&
           flightPath[0].getDepartureTime().getEpochSecond() <= dateRangeEnd &&
           dateRangeStart > LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
