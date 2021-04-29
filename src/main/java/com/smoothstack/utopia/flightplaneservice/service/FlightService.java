@@ -17,6 +17,7 @@ import com.smoothstack.utopia.shared.model.Route;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,9 +84,9 @@ public class FlightService {
                 .getIataId()
                 .equals(destinationIataId)
             ) {
-              pathsOfFlights.addAll(
-                getFlightPathDestinationFlights(originIataId, destinationIataId)
-              );
+              List<Flight> path = new ArrayList<>();
+              path.add(originFlight);
+              pathsOfFlights.add(path);
             } else {
               getAllMultiStopFlights(
                 originFlight.getRoute().getDestinationAirport().getIataId(),
@@ -123,9 +124,10 @@ public class FlightService {
       );
     if (path.size() > 1) {
       path.stream().forEach(flight -> pathsOfFlights.add(List.of(flight)));
-    } else {
+    } else if (path.size() == 1) {
       pathsOfFlights.add(path);
     }
+    
     return pathsOfFlights;
   }
 
