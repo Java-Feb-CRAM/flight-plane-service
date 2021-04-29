@@ -11,4 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
   value = HttpStatus.BAD_REQUEST,
   reason = "A route cannot have the same origin and destination"
 )
-public class InvalidRouteException extends RuntimeException {}
+public class InvalidRouteException extends RuntimeException {
+  
+  private static final long serialVersionUID = 1L;
+}
