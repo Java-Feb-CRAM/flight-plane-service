@@ -93,13 +93,14 @@ public class FlightService {
                 destinationIataId,
                 stops - 1,
                 firstOriginIataId
-              ).stream()
-              .forEach(
-                returnedFlightPath -> {
-                  returnedFlightPath.add(0, originFlight);
-                  pathsOfFlights.add(returnedFlightPath);
-                }
-              );
+              )
+                .stream()
+                .forEach(
+                  returnedFlightPath -> {
+                    returnedFlightPath.add(0, originFlight);
+                    pathsOfFlights.add(returnedFlightPath);
+                  }
+                );
             }
           }
         );
@@ -127,7 +128,7 @@ public class FlightService {
     } else if (path.size() == 1) {
       pathsOfFlights.add(path);
     }
-    
+
     return pathsOfFlights;
   }
 

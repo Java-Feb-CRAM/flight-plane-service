@@ -197,10 +197,18 @@ class FlightControllerSearchFlightIntTest {
     flights.add(this.createFlight(routeORDtoDEN, secondOriginDepartureInstant));
     flights.add(this.createFlight(routeDENtoSFO, secondOriginDepartureInstant));
     flights.add(this.createFlight(routeJFKtoSFO, secondOriginDepartureInstant));
-    flights.add(this.createFlight(routeSFOtoJFK, roundTripOriginDepartureInstant));
-    flights.add(this.createFlight(routeSFOtoDEN, roundTripOriginDepartureInstant));
-    flights.add(this.createFlight(routeDENtoORD, roundTripOriginDepartureInstant));
-    flights.add(this.createFlight(routeORDtoJFK, roundTripOriginDepartureInstant));
+    flights.add(
+      this.createFlight(routeSFOtoJFK, roundTripOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeSFOtoDEN, roundTripOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeDENtoORD, roundTripOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeORDtoJFK, roundTripOriginDepartureInstant)
+    );
     flights.add(this.createFlight(routeJFKtoDEN, firstOriginDepartureInstant));
     flights.add(this.createFlight(routeDENtoJFK, secondOriginDepartureInstant));
     flights.add(this.createFlight(routeSEAtoJFK, secondOriginDepartureInstant));
@@ -209,9 +217,15 @@ class FlightControllerSearchFlightIntTest {
     flights.add(this.createFlight(routeSLCtoGCK, firstOriginDepartureInstant));
     flights.add(this.createFlight(routeGCKtoORD, secondOriginDepartureInstant));
     flights.add(this.createFlight(routeORDtoSLC, secondOriginDepartureInstant));
-    flights.add(this.createFlight(routeSLCtoORD, roundTripOriginDepartureInstant));
-    flights.add(this.createFlight(routeORDtoGCK, roundTripOriginDepartureInstant));
-    flights.add(this.createFlight(routeGCKtoSLC, roundTripOriginDepartureInstant));
+    flights.add(
+      this.createFlight(routeSLCtoORD, roundTripOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeORDtoGCK, roundTripOriginDepartureInstant)
+    );
+    flights.add(
+      this.createFlight(routeGCKtoSLC, roundTripOriginDepartureInstant)
+    );
   }
 
   @Test
@@ -220,15 +234,14 @@ class FlightControllerSearchFlightIntTest {
     Integer stops = 0;
     String originIataId = "JFK";
     String destinationIataId = "SFO";
-    String builtUri =
-      String.format(
-        URI,
-        originIataId,
-        destinationIataId,
-        Instant.now().plus(Duration.ofDays(2)).getEpochSecond(),
-        Instant.now().plus(Duration.ofDays(5)).getEpochSecond(),
-        stops
-      );
+    String builtUri = String.format(
+      URI,
+      originIataId,
+      destinationIataId,
+      Instant.now().plus(Duration.ofDays(2)).getEpochSecond(),
+      Instant.now().plus(Duration.ofDays(5)).getEpochSecond(),
+      stops
+    );
 
     mvc
       .perform(
@@ -254,15 +267,14 @@ class FlightControllerSearchFlightIntTest {
     Integer stops = 100; // setting to 100 does not matter as the stops are hard coded to 4 max
     String originIataId = "JFK";
     String destinationIataId = "SFO";
-    String builtUri =
-      String.format(
-        URI,
-        originIataId,
-        destinationIataId,
-        Instant.now().plus(Duration.ofDays(2)).getEpochSecond(),
-        Instant.now().plus(Duration.ofDays(5)).getEpochSecond(),
-        stops
-      );
+    String builtUri = String.format(
+      URI,
+      originIataId,
+      destinationIataId,
+      Instant.now().plus(Duration.ofDays(2)).getEpochSecond(),
+      Instant.now().plus(Duration.ofDays(5)).getEpochSecond(),
+      stops
+    );
 
     mvc
       .perform(
@@ -273,11 +285,13 @@ class FlightControllerSearchFlightIntTest {
       .andExpect(status().isOk())
       .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
       .andExpect(
-        xpath("Set/item[1]/route/originAirport/iataId").string(is(originIataId)))
+        xpath("Set/item[1]/route/originAirport/iataId").string(is(originIataId))
+      )
       .andExpect(
         xpath("Set/item[last()]/route/destinationAirport/iataId")
           .string(is(destinationIataId))
-      ).andExpect(xpath("count(Set/item) <= " + (stops + 1)).booleanValue(true));    
+      )
+      .andExpect(xpath("count(Set/item) <= " + (stops + 1)).booleanValue(true));
   }
 
   @Test
@@ -286,15 +300,14 @@ class FlightControllerSearchFlightIntTest {
     Integer stops = 0;
     String originIataId = "JFK";
     String destinationIataId = "SFO";
-    String outOfDateRangeUri =
-      String.format(
-        URI,
-        originIataId,
-        destinationIataId,
-        Instant.now().plus(Duration.ofDays(1)).getEpochSecond(),
-        Instant.now().plus(Duration.ofDays(2)).getEpochSecond(),
-        stops
-      );
+    String outOfDateRangeUri = String.format(
+      URI,
+      originIataId,
+      destinationIataId,
+      Instant.now().plus(Duration.ofDays(1)).getEpochSecond(),
+      Instant.now().plus(Duration.ofDays(2)).getEpochSecond(),
+      stops
+    );
 
     mvc
       .perform(
@@ -313,15 +326,14 @@ class FlightControllerSearchFlightIntTest {
     Integer stops = 0;
     String originIataId = "JFK";
     String destinationIataId = "SFO";
-    String beforeCurrentDateUri =
-      String.format(
-        URI,
-        originIataId,
-        destinationIataId,
-        123L,
-        Instant.now().plus(Duration.ofDays(2)).getEpochSecond(),
-        stops
-      );
+    String beforeCurrentDateUri = String.format(
+      URI,
+      originIataId,
+      destinationIataId,
+      123L,
+      Instant.now().plus(Duration.ofDays(2)).getEpochSecond(),
+      stops
+    );
 
     mvc
       .perform(

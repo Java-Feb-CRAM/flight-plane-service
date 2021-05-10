@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @author Rob Maes
- * Apr 27 2021
+ * May 10 2021
  */
 @ResponseStatus(
-  value = HttpStatus.BAD_REQUEST,
-  reason = "A route cannot have the same origin and destination"
+  value = HttpStatus.NOT_FOUND,
+  reason = "The requested seat layout does not exist"
 )
-public class InvalidRouteException extends RuntimeException {
+public class SeatLayoutNotFoundException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 }
