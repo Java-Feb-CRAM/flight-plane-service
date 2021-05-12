@@ -87,4 +87,20 @@ public class SeatLayoutService {
 
     return seatLayout;
   }
+
+  @Transactional
+  public void deleteSeatLayout(Long seatLayoutId) {
+    SeatLayout seatLayout = seatLayoutDao
+      .findById(seatLayoutId)
+      .orElseThrow(SeatLayoutNotFoundException::new);
+    seatLayout
+      .getSeatGroups()
+      .forEach(
+        seatGroup -> {
+          seatGroup.getSeatLocations().forEach(seatLocationDao::delete);
+          seatGroupDao.delete(seatGroup);
+        }
+      );
+    seatLayoutDao.delete(seatLayout);
+  }
 }
