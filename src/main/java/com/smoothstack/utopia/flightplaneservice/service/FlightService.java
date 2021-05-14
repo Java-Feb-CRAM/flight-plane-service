@@ -4,6 +4,8 @@ import com.smoothstack.utopia.flightplaneservice.dao.AirplaneDao;
 import com.smoothstack.utopia.flightplaneservice.dao.AirportDao;
 import com.smoothstack.utopia.flightplaneservice.dao.FlightDao;
 import com.smoothstack.utopia.flightplaneservice.dao.RouteDao;
+import com.smoothstack.utopia.flightplaneservice.dao.SeatDao;
+import com.smoothstack.utopia.flightplaneservice.dao.SeatLocationDao;
 import com.smoothstack.utopia.flightplaneservice.dto.CreateFlightDto;
 import com.smoothstack.utopia.flightplaneservice.dto.UpdateFlightDto;
 import com.smoothstack.utopia.flightplaneservice.exception.AirplaneNotFoundException;
@@ -14,9 +16,13 @@ import com.smoothstack.utopia.flightplaneservice.exception.RouteNotFoundExceptio
 import com.smoothstack.utopia.shared.model.Airplane;
 import com.smoothstack.utopia.shared.model.Flight;
 import com.smoothstack.utopia.shared.model.Route;
+import com.smoothstack.utopia.shared.model.Seat;
+import com.smoothstack.utopia.shared.model.SeatLocation;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,18 +42,21 @@ public class FlightService {
   private final RouteDao routeDao;
   private final AirplaneDao airplaneDao;
   private final AirportDao airportDao;
+  private final SeatDao seatDao;
 
   @Autowired
   public FlightService(
     FlightDao flightDao,
     RouteDao routeDao,
     AirplaneDao airplaneDao,
-    AirportDao airportDao
+    AirportDao airportDao,
+    SeatDao seatDao
   ) {
     this.flightDao = flightDao;
     this.routeDao = routeDao;
     this.airplaneDao = airplaneDao;
     this.airportDao = airportDao;
+    this.seatDao = seatDao;
   }
 
   public List<Flight> getAllFlights() {
@@ -200,6 +209,20 @@ public class FlightService {
     flight.setReservedSeats(createFlightDto.getReservedSeats());
     flight.setSeatPrice(createFlightDto.getSeatPrice());
     flightDao.save(flight);
+    Set<SeatLocation> seatLocations = new HashSet<>();
+    flight
+      .getAirplane()
+      .getAirplaneType()
+      .getSeatLayout()
+      .getSeatGroups()
+      .forEach(g -> seatLocations.addAll(g.getSeatLocations()));
+    for (SeatLocation seatLocation : seatLocations) {
+      Seat seat = new Seat();
+      seat.setFlight(flight);
+      seat.setCol(seatLocation.getCol());
+      seat.setRow(seatLocation.getRow());
+      this.seatDao.save(seat);
+    }
     return flight;
   }
 
