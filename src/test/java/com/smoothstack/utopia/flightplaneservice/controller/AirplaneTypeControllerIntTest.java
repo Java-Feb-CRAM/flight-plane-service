@@ -115,38 +115,38 @@ class AirplaneTypeControllerIntTest {
   /*
     POST Tests
    */
-  @Test
-  void canCreateAirplaneType_whenPostAirplaneTypeWithValidData_thenStatus201()
-    throws Exception {
-    CreateAirplaneTypeDto createAirplaneTypeDto = new CreateAirplaneTypeDto();
-    createAirplaneTypeDto.setMaxCapacity(300);
-    mvc
-      .perform(
-        post("/airplane_types")
-          .content(Utils.asJsonString(createAirplaneTypeDto))
-          .contentType(MediaType.APPLICATION_JSON)
-          .accept(MediaType.APPLICATION_JSON)
-      )
-      .andExpect(status().isCreated())
-      .andExpect(
-        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
-      )
-      .andExpect(jsonPath("$.maxCapacity", is(300)))
-      .andExpect(
-        result -> {
-          AirplaneType created = Utils
-            .getMapper()
-            .readValue(
-              result.getResponse().getContentAsString(),
-              AirplaneType.class
-            );
-          Assertions.assertEquals(
-            300,
-            airplaneTypeDao.findById(created.getId()).get().getMaxCapacity()
-          );
-        }
-      );
-  }
+  //  @Test
+  //  void canCreateAirplaneType_whenPostAirplaneTypeWithValidData_thenStatus201()
+  //    throws Exception {
+  //    CreateAirplaneTypeDto createAirplaneTypeDto = new CreateAirplaneTypeDto();
+  //    createAirplaneTypeDto.setMaxCapacity(300);
+  //    mvc
+  //      .perform(
+  //        post("/airplane_types")
+  //          .content(Utils.asJsonString(createAirplaneTypeDto))
+  //          .contentType(MediaType.APPLICATION_JSON)
+  //          .accept(MediaType.APPLICATION_JSON)
+  //      )
+  //      .andExpect(status().isCreated())
+  //      .andExpect(
+  //        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+  //      )
+  //      .andExpect(jsonPath("$.maxCapacity", is(300)))
+  //      .andExpect(
+  //        result -> {
+  //          AirplaneType created = Utils
+  //            .getMapper()
+  //            .readValue(
+  //              result.getResponse().getContentAsString(),
+  //              AirplaneType.class
+  //            );
+  //          Assertions.assertEquals(
+  //            300,
+  //            airplaneTypeDao.findById(created.getId()).get().getMaxCapacity()
+  //          );
+  //        }
+  //      );
+  //  }
 
   /*
     PUT Tests

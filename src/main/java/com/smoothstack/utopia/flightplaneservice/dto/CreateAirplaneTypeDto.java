@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class CreateAirplaneTypeDto {
 
-  @NotNull(message = "Max capacity is required")
-  @Positive(message = "Max capacity must be greater than 0")
-  private Integer maxCapacity;
+  @NotNull(message = "Seat layout ID is required")
+  @Positive(message = "Seat layout ID must be greater than 0")
+  private Long seatLayoutId;
 }
